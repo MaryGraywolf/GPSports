@@ -27,7 +27,7 @@ export function AuthContextProvider({   children    }: AuthProviderProps){
     const [isUserLoading, setIsUserLoading] = useState(false);
 
     const [request, response, promptAsync] = Google.useAuthRequest({
-        clientId: '719198927262-vabc6npjs3c3cpp23qjuf1v2vlekc2g5.apps.googleusercontent.com',
+        clientId: '1033335813138-smupaq46quj4f78q49kgbjeadl390dp4.apps.googleusercontent.com',
         redirectUri: AuthSession.makeRedirectUri({ useProxy: true}),
         scopes: ['profile', 'email']
     });
@@ -44,13 +44,24 @@ export function AuthContextProvider({   children    }: AuthProviderProps){
             }
         }
 
-        async function signInWithGoogleAsync(access_token: string ){
-            console.log('TOKEN DE AUTENTICACAO ===>', access_token);
+        async function signInWithGoogle(access_token: string ){
+            try {
+
+                setIsUserLoading(true);
+
+                //await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', { access_token })
+
+            }catch (error){
+                console.log(error);
+                throw error;
+            } finally {
+                setIsUserLoading(false);
+            }
         }
 
         useEffect(() => {
             if(response?.type === 'success' && response.authentication?.accessToken){
-                signInWithGoogleAsync(response.authentication.accessToken)           
+                signInWithGoogle(response.authentication.accessToken)           
             }
         }, [response]);
 
