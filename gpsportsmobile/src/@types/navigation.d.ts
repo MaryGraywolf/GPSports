@@ -6,6 +6,8 @@ export declare global {
             pools: undefined;
             user: undefined;
             find: undefined;
+            sign: undefined;
+            regi: undefined;
         }
 
     }
