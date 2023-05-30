@@ -7,17 +7,34 @@ import { Input } from "../components/Input";
 import { useAuth } from '../hooks/useAuth';
 
 import React from 'react';
+import { getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from '../../firebase-config';
 
-export function Register() {
-
-  const [show, setShow] = React.useState(false);
+function RegisteConext() {
 
   const { navigate } = useNavigation();
+
+  const [show, setShow] = React.useState(false);
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
-  
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const handleCreateAccount = () => {
+    createUserWithEmailAndPassword(auth, email, password).then(() => {
+      console.log('Conta criada com sucesso!')
+      const user = auth.currentUser;
+      console.log(user);
+    })
+      .catch((error) => {
+        console.log(error);
+        alert(error.message);
+      })
+  }
 
   return (
     <Center flex={1} bgColor="gray.900" p={7}>
@@ -85,15 +102,24 @@ export function Register() {
 
       <Button
         title="CADASTRAR-SE"
+        onPress={handleCreateAccount}
         mt={4}
       />
 
       <Text color="white" fontSize={14} mt={6} fontFamily="heading">
-        Já é membro? 
+        Já é membro?
       </Text>
       <Text color="purple.500" fontSize={14} fontFamily="heading" onPress={() => navigate('sign')}>Clique aqui para logar!</Text>
 
 
     </Center>
   );
+}
+
+export function Register() {
+
+  return (
+    <RegisteConext />
+  )
+
 }

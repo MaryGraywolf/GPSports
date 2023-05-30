@@ -3,22 +3,39 @@ import { useNavigation } from '@react-navigation/native';
 import { Fontisto, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { Button } from '../components/Button';
 import { Input } from "../components/Input";
-import { Header } from "../components/Header";
 import { useAuth } from '../hooks/useAuth';
 
 import React from 'react';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut} from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from '../../firebase-config';
 
-
-export function SignIn() {
-  const { signIn, user } = useAuth();
+function SignInContext() {
 
   const { navigate } = useNavigation();
 
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const { signIn, user } = useAuth();
 
   const [show, setShow] = React.useState(false);
+
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const handleSignIn = () => {
+    signInWithEmailAndPassword(auth, email, password).then(() => {
+      console.log('Login realizado com sucesso!')
+      const user = auth.currentUser;
+      console.log(user);
+      navigate('pools');
+    })
+      .catch((error) => {
+        console.log(error);
+        alert(error.message);
+      })
+  }
 
   return (
     <Center flex={1} bgColor="gray.900" p={7}>
@@ -44,7 +61,9 @@ export function SignIn() {
 
       <Input
         mb={2}
-        placeholder='Confirme a senha'
+        placeholder='Digite sua senha'
+        value={password}
+        onChangeText={e => setPassword(e)}
         InputLeftElement={<Icon as={<MaterialIcons name="lock" />} size={5} ml="2" color="muted.400" />}
         type={show ? "text" : "password"}
         InputRightElement={
@@ -58,7 +77,7 @@ export function SignIn() {
         title="LOGAR"
         mt={10}
         mb={4}
-        onPress={signIn}
+        onPress={handleSignIn}
       />
 
       <Button
@@ -75,4 +94,13 @@ export function SignIn() {
 
     </Center>
   );
+}
+
+
+export function SignIn() {
+
+  return (
+    <SignInContext />
+  );
+
 }

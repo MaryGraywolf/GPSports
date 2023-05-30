@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "259741794717",
+    "project_id": "gpsportsmobile-4f987",
+    "storage_bucket": "gpsportsmobile-4f987.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259741794717:android:1bce0235212f5c7d6eaf74",
+        "android_client_info": {
+          "package_name": "com.marygraywolf.gpsportsmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259741794717-2gmhqtigl1kpe25s71c5n52i75hp8ke2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeF6Bois0Z4Vo1qGY1VfnvYgoSFD7KVtA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "259741794717-2gmhqtigl1kpe25s71c5n52i75hp8ke2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
