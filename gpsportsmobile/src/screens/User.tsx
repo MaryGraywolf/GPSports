@@ -4,7 +4,7 @@ import { Select as NativeBaseSelect } from "native-base";
 import { useRoute } from '@react-navigation/native';
 
 import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, addDoc  } from 'firebase/firestore/lite';
 
 
 import { Header } from "../components/Header";
@@ -28,9 +28,9 @@ export function User({ route }) {
         getUsers();
     }, []);
 
-    const { email: userEmail } = route.params; // Obtenha o valor de 'email' do objeto 'params'
+    const { user: userUid } = route.params; // Obtenha o valor de 'email' do objeto 'params'
 
-    console.log(userEmail);
+    console.log(userUid);
 
     return (
         <VStack flex={1} bgColor="gray.900">
@@ -38,11 +38,11 @@ export function User({ route }) {
 
             <VStack mt={8} mx={5} alignItems="center">
                 <Heading fontFamily="heading" color="purple.500" fontSize="xl" my={5} textAlign="center">
-                    Ol·, seja bem vindo!
+                    Ol√°, seja bem vindo!
                 </Heading>
 
                 <Heading fontFamily="heading" color="white" fontSize="25" textAlign="center">
-                    {userEmail}
+                    {userUid}
                 </Heading>
 
             </VStack>

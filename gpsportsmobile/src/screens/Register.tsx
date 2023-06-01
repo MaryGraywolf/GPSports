@@ -7,8 +7,10 @@ import { Input } from "../components/Input";
 import { useAuth } from '../hooks/useAuth';
 
 import React from 'react';
-import { getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase-config';
+import { getFirestore, collection, getDocs, setDoc, doc } from 'firebase/firestore/lite';
+
 
 function RegisteConext() {
 
@@ -18,16 +20,41 @@ function RegisteConext() {
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [name, setName] = React.useState('');
+  const [nickName, setNickName] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
 
   const auth = getAuth(firebaseConfig);
+  const db = getFirestore(firebaseConfig);
 
   const handleCreateAccount = () => {
     createUserWithEmailAndPassword(auth, email, password).then(() => {
-      console.log('Conta criada com sucesso!')
-      const user = auth.currentUser;
-      alert('Conta criada com sucesso!');
-      console.log(user);
+
+      const userCollection = doc(db, 'users', auth.currentUser.uid);
+
+      console.log(auth.currentUser.uid);
+
+      const setRegister = async () => {
+        try {
+          const docRef = await setDoc(userCollection, {
+            name: name,
+            nickName: nickName,
+            email: email,
+            password: password,
+          });
+          console.log("Documento criado no branco: ", docRef);
+
+          console.log('Conta criada com sucesso!')
+          const user = auth.currentUser;
+          console.log(user);
+          navigate('inforegisteruser', { name: nickName });
+
+        } catch (error) {
+          console.error("Erro ao criar o documento: ", error);
+        }
+      }
+
+      setRegister();
     })
       .catch((error) => {
         console.log(error);
@@ -54,13 +81,16 @@ function RegisteConext() {
         mb={2}
         placeholder='Informe seu nome completo'
         InputLeftElement={<Icon as={<MaterialIcons name="person-outline" />} size={5} ml="2" color="muted.400" />}
-
-
+        value={name}
+        onChangeText={e => setName(e)}
       />
 
       <Input
         mb={2}
         placeholder='Informe seu nickname'
+        InputLeftElement={<Icon as={<MaterialIcons name="person-outline" />} size={5} ml="2" color="muted.400" />}
+        value={nickName}
+        onChangeText={e => setNickName(e)}
       />
 
       <Input

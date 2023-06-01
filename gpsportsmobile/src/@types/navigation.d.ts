@@ -8,6 +8,7 @@ export declare global {
             find: undefined;
             sign: undefined;
             regi: undefined;
+            inforegisteruser: undefined;
         }
 
     }

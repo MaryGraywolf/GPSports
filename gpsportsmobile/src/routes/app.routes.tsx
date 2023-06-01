@@ -10,6 +10,7 @@ import { Find } from '../screens/Find';
 import { User } from '../screens/User';
 import { SignIn } from '../screens/SignIn';
 import { Register } from '../screens/Register';
+import { InfoRegisterUser } from '../screens/InfoRegisterUser';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -55,6 +56,17 @@ export function AppRoutes() {
       />
 
       <Screen
+        name="inforegisteruser"
+        component={InfoRegisterUser}
+        initialParams={{ id: '' }}
+        options={{
+          tabBarButton: () => null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' }
+        }}
+      />
+
+      <Screen
         name="new"
         component={New}
         options={{
@@ -75,7 +87,7 @@ export function AppRoutes() {
       <Screen
         name="user"
         component={User}
-        initialParams={{ email: '' }} // Defina o tipo e o valor inicial do parâmetro email
+        initialParams={{ user: '' }} // Defina o tipo e o valor inicial do parï¿½metro email
         options={{
           tabBarIcon: ({ color, size }) => <UserCircle color={color} />,
           tabBarLabel: 'Perfil'
@@ -87,6 +99,8 @@ export function AppRoutes() {
         component={Find}
         options={{ tabBarButton: () => null }}
       />
+
+
     </Navigator>
   );
 }
