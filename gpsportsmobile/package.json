@@ -14,6 +14,7 @@
     "@expo/webpack-config": "^18.0.1",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.1.6",
+    "@react-navigation/stack": "^6.3.16",
     "country-list": "^2.3.0",
     "expo": "~48.0.16",
     "expo-app-loading": "^2.1.1",

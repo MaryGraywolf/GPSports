@@ -14,10 +14,12 @@ export function Pools(){
             <Header title="Meus eventos esportivos"/>
 
             <VStack mt={6} mx={5} borderBottomWidth={1} borderBottomColor="gray.600" pb={4} mb={4}>
+
                 <Button title="BUSCAR EVENTO ESPORTIVO POR CÓDIGO"
                 leftIcon={<Icon as={Octicons} name="search" color="black" size="md" />}
                 onPress={() => navigate('find')}
                 />
+                
             </VStack>
         </VStack>
     );

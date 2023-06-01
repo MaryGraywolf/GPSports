@@ -8,7 +8,6 @@ import { useAuth } from '../hooks/useAuth';
 
 import React from 'react';
 import { getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
 
 function RegisteConext() {
@@ -21,13 +20,13 @@ function RegisteConext() {
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  const auth = getAuth(firebaseConfig);
 
   const handleCreateAccount = () => {
     createUserWithEmailAndPassword(auth, email, password).then(() => {
       console.log('Conta criada com sucesso!')
       const user = auth.currentUser;
+      alert('Conta criada com sucesso!');
       console.log(user);
     })
       .catch((error) => {

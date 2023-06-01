@@ -12,7 +12,7 @@ import { firebaseConfig } from '../../firebase-config';
 
 function SignInContext() {
 
-  const { navigate } = useNavigation();
+  const navigation = useNavigation();
 
   const { signIn, user } = useAuth();
 
@@ -20,16 +20,19 @@ function SignInContext() {
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [id, setId] = React.useState('');
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  const auth = getAuth(firebaseConfig);
 
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password).then(() => {
       console.log('Login realizado com sucesso!')
       const user = auth.currentUser;
       console.log(user);
-      navigate('pools');
+      if(email != ''){
+        console.log(user.email);
+      }
+      navigation.navigate('user', { email: user.uid});
     })
       .catch((error) => {
         console.log(error);
@@ -90,7 +93,7 @@ function SignInContext() {
       <Text color="white" fontSize={14} mt={6} fontFamily="heading">
         Ainda não é membro?
       </Text>
-      <Text color="purple.500" fontSize={14} fontFamily="heading" onPress={() => navigate('regi')}>Clique aqui para realizar seu cadastro!</Text>
+      <Text color="purple.500" fontSize={14} fontFamily="heading" onPress={() => navigation.navigate('regi')}>Clique aqui para realizar seu cadastro!</Text>
 
     </Center>
   );
