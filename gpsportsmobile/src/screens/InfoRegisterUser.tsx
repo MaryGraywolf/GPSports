@@ -1,4 +1,4 @@
-import { Center, Text, Icon, Heading, VStack, Pressable } from 'native-base';
+import { Center, Text, Icon, Heading, VStack, Pressable, Checkbox } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { Fontisto, MaterialIcons } from '@expo/vector-icons';
 import { Button } from "../components/Button";
@@ -6,25 +6,42 @@ import { Header } from "../components/Header";
 import { Input } from "../components/Input";
 import { useAuth } from '../hooks/useAuth';
 
-import React from 'react';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase-config';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, collection, getDocs, updateDoc , doc } from 'firebase/firestore/lite';
+
+import React from 'react';
 
 export function InfoRegisterUser({ route }) {
 
     const { navigate } = useNavigation();
 
-    const [show, setShow] = React.useState(false);
-
     const [cidade, setCidade] = React.useState('');
     const [estado, setEstado] = React.useState('');
-    const [name, setName] = React.useState('');
+    const [esportes, setEsportes] = React.useState([]);
 
     const auth = getAuth(firebaseConfig);
+    const db = getFirestore(firebaseConfig);
+    const userCollection = doc(db, 'users', auth.currentUser.uid);
 
-    const handleCreateAccount = () => {
+    const setRegister = async () => {
+        try {
+          const docRef = await updateDoc(userCollection, {
+            cidade: cidade,
+            estado: estado,
+            esportes: esportes
+          });
+          console.log("Documento criado no branco: ", docRef);
 
-    }
+          console.log('Conta criada com sucesso!')
+          const user = auth.currentUser;
+          console.log(user);
+          navigate('pools');
+
+        } catch (error) {
+          console.error("Erro ao criar o documento: ", error);
+        }
+      }
 
     const { name: userName } = route.params;
 
@@ -60,9 +77,15 @@ export function InfoRegisterUser({ route }) {
                 onChangeText={e => setCidade(e)}
             />
 
+            <Checkbox.Group value={esportes} onChange={setEsportes}>
+                <Checkbox value="Futebol">Futebol</Checkbox>
+                <Checkbox value="Basquete">Basquete</Checkbox>
+                <Checkbox value="Volei">Vôlei</Checkbox>
+            </Checkbox.Group>
+
             <Button
                 title="CONTINUAR"
-                onPress={handleCreateAccount}
+                onPress={setRegister}
                 mt={4}
             />
 

@@ -8,6 +8,7 @@ import { theme } from './src/styles/theme';
 import { AuthContextProvider } from './src/contexts/AuthContext';
 
 import { Routes } from './src/routes';
+import { InfoRegisterUser } from './src/screens/InfoRegisterUser';
 
 export default function App() {
 

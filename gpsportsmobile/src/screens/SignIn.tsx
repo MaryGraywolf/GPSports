@@ -32,7 +32,8 @@ function SignInContext() {
       if(email != ''){
         console.log(user.email);
       }
-      navigation.navigate('user', { email: user.uid});
+      //navigation.navigate('user', { email: user.uid});
+      navigation.navigate('new');
     })
       .catch((error) => {
         console.log(error);
