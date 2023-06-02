@@ -71,7 +71,7 @@ export function AppRoutes() {
         component={New}
         options={{
           tabBarIcon: ({ color, size }) => <PlusCircle color={color} />,
-          tabBarLabel: 'Novo Evento'
+          tabBarLabel: ''
         }}
       />
 
@@ -80,7 +80,7 @@ export function AppRoutes() {
         component={Pools}
         options={{
           tabBarIcon: ({ color, size }) => <SoccerBall color={color} />,
-          tabBarLabel: 'Meus Eventos'
+          tabBarLabel: ''
         }}
       />
 
@@ -90,7 +90,7 @@ export function AppRoutes() {
         initialParams={{ user: '' }} // Defina o tipo e o valor inicial do par�metro email
         options={{
           tabBarIcon: ({ color, size }) => <UserCircle color={color} />,
-          tabBarLabel: 'Perfil'
+          tabBarLabel: ''
         }}
       />
 

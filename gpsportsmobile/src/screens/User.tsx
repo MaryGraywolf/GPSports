@@ -32,6 +32,8 @@ export function User({ route }) {
 
     console.log(userUid);
 
+
+
     return (
         <VStack flex={1} bgColor="gray.900">
             <Header title="Criar evento esportivo" showBackButton />

@@ -11,19 +11,17 @@ import { EmptyMyPoolList } from '../components/EmptyMyPoolList';
 import { Option } from '../components/Option';
 import { Guesses } from '../components/Guesses';
 
-interface RoutePrams {
-  id: string;
-}
 
-export function Details() {
+export function Details({ route }) {
   const [optionSelected, setOptionSelected] = useState<'guesses' | 'ranking'>('guesses')
   const [isLoading, setIsLoading] = useState(true);
   const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
 
-  const route = useRoute();
+
   const toast = useToast();
 
-  const { id } = route.params as RoutePrams;
+  const { user: userUid } = route.params; 
+
 
   async function fetchPoolDetails() {
     try {

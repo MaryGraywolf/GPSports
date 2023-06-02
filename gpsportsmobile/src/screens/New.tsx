@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Center, Heading, Text, VStack, Select, CheckIcon, TextArea, HStack, Switch, ScrollView } from 'native-base';
+import { Center, Heading, Text, VStack, Select, CheckIcon, TextArea, HStack, Switch, ScrollView, FormControl } from 'native-base';
 import { Select as NativeBaseSelect } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 
 import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs, updateDoc, doc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, updateDoc, doc, setDoc, addDoc } from 'firebase/firestore/lite';
 
 import { useTheme } from 'native-base';
 
@@ -34,7 +34,7 @@ export function New() {
 
     const auth = getAuth(firebaseConfig);
     const db = getFirestore(firebaseConfig);
-    const userCollection = doc(db, 'pools', auth.currentUser.uid);
+    const userCollection = collection(db, 'pools');
 
     const validateFields = () => {
         if (!name || !esporte || qtdPessoa <= 0 || valor <= 0 || cep <= 0 || !estado || !cidade || !bairro || !rua) {
@@ -50,12 +50,13 @@ export function New() {
 
     const setRegister = async () => {
 
-        if (!validateFields()) {
-            return;
-        }
-
         try {
-            const docRef = await updateDoc(userCollection, {
+
+            if (!validateFields()) {
+                return;
+            }
+
+            const docRef = await addDoc(userCollection, {
                 name: name,
                 esporte: esporte,
                 qtdPessoa: qtdPessoa,
@@ -68,12 +69,14 @@ export function New() {
                 bairro: bairro,
                 rua: rua,
                 ref: ref,
+                participantes: [{
+                    id: auth.currentUser.uid,
+                    nome: auth.currentUser.displayName,
+                }]
+
             });
             console.log("Documento criado no branco: ", docRef);
 
-            console.log('Conta criada com sucesso!')
-            const user = auth.currentUser;
-            console.log(user);
             navigate('pools');
 
         } catch (error) {
@@ -86,7 +89,7 @@ export function New() {
             <VStack flex={1} bgColor="gray.900">
                 <Header title="Criar evento esportivo" showBackButton />
 
-                <VStack mt={8} mx={5} alignItems="center">
+                <VStack mt={4} mx={5} alignItems="center">
                     <Heading fontFamily="heading" mb={4} color="purple.500" fontSize="xl" my={5} textAlign="center">
                         GPSPORTS
                     </Heading>
@@ -99,51 +102,52 @@ export function New() {
                         placeholder='Qual nome do seu evento esportivo?'
                         onChangeText={e => setName(e)}
                     />
+                    <HStack alignItems="center">
+                        <FormControl w={'55%'} mr={4}>
+                            <Select selectedValue={esporte}
+                                placeholder="Qual o Esporte?"
+                                onValueChange={itemValue => setEsporte(itemValue)}
+                                mb={4}
+                                h={14}
 
-                    <Select selectedValue={esporte}
-                        placeholder="Qual o Esporte?"
-                        onValueChange={itemValue => setEsporte(itemValue)}
-                        mb={4}
-                        h={14}
-                        w={'full'}
-                        bg={'gray.800'}
-                        color={'gray.300'}
-                        borderColor={'gray.600'}
-                        fontSize={'md'}
-                        px={4}
-                        mx={5}>
-                        <Select.Item label="Futebol" value="Futebol" bg={'gray.800'} />
-                        <Select.Item label="Vôlei" value="Volei" />
-                        <Select.Item label="Basquete" value="Basquete" />
-                    </Select>
+                                bg={'gray.800'}
+                                color={'gray.300'}
+                                //borderColor={'gray.600'}
+                                fontSize={'md'}>
 
-                    <Input
-                        mb={4}
-                        placeholder='Quantas pessoas?'
-                        value={qtdPessoa.toString()}
-                        onChangeText={e => setQtdPessoa(parseFloat(e))}
-                    />
+                                <Select.Item label="Futebol" value="Futebol" />
+                                <Select.Item label="Vôlei" value="Volei" />
+                                <Select.Item label="Basquete" value="Basquete" />
+                            </Select>
+                        </FormControl>
 
+                        <Input
+                            mb={4}
+                            w={'40%'}
+                            placeholder='N° pessoas?'
+                            onChangeText={e => setQtdPessoa(parseInt(e, 10))}
+                        />
 
+                    </HStack>
 
                     <HStack alignItems="center" justifyContent="space-between" mb={2} mx={5}>
 
 
 
                     </HStack>
-                    <Heading fontFamily="heading" color="gray.300" fontSize="16" textAlign="left">
+                    <Text fontFamily="heading" color="gray.300" fontSize="16" textAlign="left" mr={'60%'}>
                         Local Particular?
-                    </Heading>
+                    </Text>
                     <HStack alignItems="center" justifyContent={'space-between'}>
 
-                        <VStack>
+                        <VStack w={'30%'} mr={8}>
                             <Switch size="md" />
                         </VStack>
 
                         <Input
                             mb={4}
                             placeholder='R$ por Pessoa'
-                            w={'30%'}
+                            w={'70%'}
                             onChangeText={e => setValor(parseFloat(e))}
                         />
                     </HStack>
@@ -172,7 +176,7 @@ export function New() {
 
                         <Input
                             mb={4}
-                            w={'50%'}
+                            w={'55%'}
                             placeholder='Estado'
                             value={estado}
                             onChangeText={e => setEstado(e)}
@@ -190,7 +194,7 @@ export function New() {
 
                         <Input
                             mb={4}
-                            w={'30%'}
+                            w={'35%'}
                             placeholder='Número'
                             onChangeText={e => setRua(e)}
                         />
@@ -217,11 +221,13 @@ export function New() {
 
                     <Button
                         title="CRIAR MEU EVENTO"
+                        onPress={setRegister}
                     />
 
                     <Text color="gray.200" fontSize="sm" textAlign="center" px={10} mt={4}>
                         Após criar seu evento você irá receber um código único para compartilhar com seus amigos e chama-los para jogar.
                     </Text>
+
                 </VStack>
             </VStack>
         </ScrollView>
