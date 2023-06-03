@@ -138,7 +138,7 @@ export function New() {
                     <Text fontFamily="heading" color="gray.300" fontSize="16" textAlign="left" mr={'60%'}>
                         Local Particular?
                     </Text>
-                    <HStack alignItems="center" justifyContent={'space-between'}>
+                    <HStack alignItems="center" justifyContent={'space-between'} w='80%'>
 
                         <VStack w={'30%'} mr={8}>
                             <Switch size="md" />

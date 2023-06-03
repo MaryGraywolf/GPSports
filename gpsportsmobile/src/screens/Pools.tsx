@@ -30,29 +30,7 @@ export function Pools() {
     useEffect(() => {
         const getUsers = async () => {
             const data = await getDocs(userCollection);
-            const pools = data.docs.map((doc) => (
-                {
-                    id: doc.id,
-                    name: doc.data().name,
-                    esporte: doc.data().esporte,
-                    qtdPessoa: doc.data().qtdPessoa,
-                    particular: doc.data().particular,
-                    valor: doc.data().valor,
-                    obs: doc.data().obs,
-                    cep: doc.data().cep,
-                    estado: doc.data().estado,
-                    cidade: doc.data().cidade,
-                    bairro: doc.data().bairro,
-                    rua: doc.data().rua,
-                    ref: doc.data().ref,
-                    participantes: doc.data().participantes,
-                }
-            ));
-            setPools(pools);
-            console.log(pools[0].ref); 
-            const info = {
-                name: pools[0].name
-            }
+            setPools(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         };
         getUsers();
     }, []);
@@ -73,12 +51,13 @@ export function Pools() {
                         <FlatList
                             data={pools}
                             keyExtractor={data => data.id}
-                            renderItem={({ data }) => (
+                            renderItem={({ item }) => 
                                 <PoolCard
-                                    data={data.name}
+                                    id={item.id} 
+                                    data={item.id}               
                                     //onPress={() => navigate('details', { id: item.id })}
                                 />
-                            )}
+                            }
                             ListEmptyComponent={<EmptyPoolList />}
                             showsVerticalScrollIndicator={false}
                             _contentContainerStyle={{ pb: 10 }}
