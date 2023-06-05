@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Center, Heading, Text, VStack, Select, CheckIcon, TextArea, HStack, Switch, ScrollView, FormControl } from 'native-base';
 import { Select as NativeBaseSelect } from "native-base";
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs, updateDoc, doc, setDoc, addDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, updateDoc, doc, setDoc, addDoc } from 'firebase/firestore';
 
 import { useTheme } from 'native-base';
 
@@ -12,12 +12,25 @@ import { Header } from "../components/Header";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { getAuth } from 'firebase/auth';
+import { query, where } from 'firebase/firestore';
 
 
 export function New() {
 
     const { navigate } = useNavigation();
 
+    // Conexões com o Banco
+
+    const auth = getAuth(firebaseConfig);
+    const db = getFirestore(firebaseConfig);
+    const poolsCollection = collection(db, 'pools');
+    const userCollection = collection(db, 'users');
+
+    // Valores da tabela Users
+
+    const [user, setUser] = useState([]);
+
+    // Valores da tabela Pools
     const [esporte, setEsporte] = useState('');
     const [name, setName] = useState('');
     const [qtdPessoa, setQtdPessoa] = useState(0);
@@ -31,13 +44,8 @@ export function New() {
     const [rua, setRua] = useState('');
     const [ref, setRef] = useState('');
 
-
-    const auth = getAuth(firebaseConfig);
-    const db = getFirestore(firebaseConfig);
-    const userCollection = collection(db, 'pools');
-
     const validateFields = () => {
-        if (!name || !esporte || qtdPessoa <= 0 || valor <= 0 || cep <= 0 || !estado || !cidade || !bairro || !rua) {
+        if (!name || !esporte || qtdPessoa <= 0 || particular == true && valor <= 0 || cep <= 0 || !estado || !cidade || !bairro || !rua) {
             // Verifique se todos os campos obrigatórios estão preenchidos
             alert('Preencha todos os campos obrigatórios.');
             return false;
@@ -48,6 +56,50 @@ export function New() {
         return true;
     };
 
+    function generateCode() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let code = '';
+        for (let i = 0; i < 6; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          code += characters.charAt(randomIndex);
+        }
+        return code;
+      }
+
+    const code = generateCode(); 
+
+    useFocusEffect(
+        useCallback(() => {
+
+            const fetchUser = async () => {
+
+                const dataUser = query(userCollection, where("id", "==", auth.currentUser.uid));
+                const querySnapshot = await getDocs(dataUser);
+
+                const list = [];
+
+                querySnapshot.forEach((doc) => {
+
+                    const userData = {
+                        id: doc.id,
+                        name: doc.data().nickName,
+                    };
+
+                    list.push(userData);
+
+                });
+
+                setUser(list);
+
+            };
+
+            fetchUser();
+            
+        }, [])
+    );
+
+    console.log(user);
+
     const setRegister = async () => {
 
         try {
@@ -56,8 +108,13 @@ export function New() {
                 return;
             }
 
-            const docRef = await addDoc(userCollection, {
+            const docRef = await addDoc(poolsCollection, {
                 name: name,
+                code: code,
+                owner: {
+                    id: user[0].id,
+                    name: user[0].name,
+                },
                 esporte: esporte,
                 qtdPessoa: qtdPessoa,
                 particular: particular,
@@ -70,8 +127,10 @@ export function New() {
                 rua: rua,
                 ref: ref,
                 participantes: [{
-                    id: auth.currentUser.uid,
-                    nome: auth.currentUser.displayName,
+                    id: user[0].id,
+                    user: {
+                        name: user[0].name,
+                    }
                 }]
 
             });
@@ -141,7 +200,7 @@ export function New() {
                     <HStack alignItems="center" justifyContent={'space-between'} w='80%'>
 
                         <VStack w={'30%'} mr={8}>
-                            <Switch size="md" />
+                            <Switch size="md" onValueChange={itemValue => setParticular(itemValue)} />
                         </VStack>
 
                         <Input

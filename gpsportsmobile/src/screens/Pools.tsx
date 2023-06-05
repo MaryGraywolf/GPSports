@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
-import { VStack, Icon, useToast, FlatList } from 'native-base';
+import { VStack, Icon, useToast, FlatList, Text } from 'native-base';
 import { Octicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
@@ -10,30 +10,114 @@ import { Loading } from '../components/Loading';
 import { EmptyPoolList } from '../components/EmptyPoolList';
 
 import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs, addDoc  } from 'firebase/firestore/lite';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, getDocs, addDoc, onSnapshot, query, where } from 'firebase/firestore';
+import { Participants } from '../components/Participants';
 
 
 
 export function Pools() {
 
     const [isLoading, setIsLoading] = useState(true);
-    const [pools, setPools] = useState([])
+    const [pools, setPools] = useState([]);
+    const [user, setUser] = useState([]);
+
 
     const { navigate } = useNavigation();
 
     const [email, setEmail] = useState('');
     const [users, setUsers] = useState([]);
 
+    const auth = getAuth(firebaseConfig);
     const db = getFirestore(firebaseConfig);
-    const userCollection = collection(db, 'pools');
+    const poolsCollection = collection(db, 'pools');
+    const userCollection = collection(db, 'users');
+
+    useFocusEffect(
+        useCallback(() => {
+
+            const fetchUser = async () => {
+
+                const dataUser = query(userCollection, where("id", "==", auth.currentUser.uid));
+                const querySnapshot = await getDocs(dataUser);
+
+                const list = [];
+
+                querySnapshot.forEach((doc) => {
+
+                    const userData = {
+                        id: doc.id,
+                        user: {
+                            name: doc.data().name,
+                        }
+                    };
+
+                    list.push(userData);
+
+                });
+
+                setUser(list);
+
+            };
+
+            fetchUser();
+        }, [])
+    );
+
+        console.log(user);
 
     useEffect(() => {
-        const getUsers = async () => {
-            const data = await getDocs(userCollection);
-            setPools(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        };
-        getUsers();
-    }, []);
+            const fetchPools = async () => {
+
+                const dataUser = query(userCollection, where("id", "==", auth.currentUser.uid));
+                const querySnapshot = await getDocs(dataUser);
+
+                const list = [];
+
+                querySnapshot.forEach((doc) => {
+
+                    const userData = {
+                        id: doc.id,
+                        user: {
+                            name: doc.data().name,
+                        }
+                    };
+
+                    list.push(userData);
+
+                });
+
+                const participantQuery = query(poolsCollection, where('participantes', '==', list));
+                const participantSnapshot = await getDocs(participantQuery);
+
+                const participantList = [];
+
+                console.log(participantSnapshot);
+                console.log(participantSnapshot.forEach((doc) => { console.log(doc.data()) }));
+                console.log(auth.currentUser.uid);
+
+                participantSnapshot.forEach((doc) => {
+                    const poolData = {
+                        id: doc.id,
+                        title: doc.data().name,
+                        owner: {
+                            name: doc.data().owner.name,
+                            ownerId: doc.data().owner.id,
+                          },
+                    };
+
+                    participantList.push(poolData);
+                });
+
+                setPools(participantList);
+                setIsLoading(false);
+                //console.log(participants);
+            
+            };
+
+            fetchPools();
+        
+        }, []);
 
     return (
         <VStack flex={1} bgColor="gray.900">
@@ -46,16 +130,20 @@ export function Pools() {
                     onPress={() => navigate('find')}
                 />
 
+            </VStack>
+            <VStack mt={6} mx={5} borderBottomWidth={1} borderBottomColor="gray.600" pb={4} mb={4}>
+
                 {
                     isLoading ? <Loading /> :
+
                         <FlatList
                             data={pools}
                             keyExtractor={data => data.id}
-                            renderItem={({ item }) => 
+                            renderItem={({ item }) =>
                                 <PoolCard
-                                    id={item.id} 
-                                    data={item.id}               
-                                    //onPress={() => navigate('details', { id: item.id })}
+                                    id={item.id}
+                                    data={item}
+                                //onPress={() => navigate('details', { id: item.id })}
                                 />
                             }
                             ListEmptyComponent={<EmptyPoolList />}

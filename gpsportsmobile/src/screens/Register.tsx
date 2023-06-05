@@ -37,6 +37,7 @@ function RegisteConext() {
       const setRegister = async () => {
         try {
           const docRef = await setDoc(userCollection, {
+            id: auth.currentUser.uid,
             name: name,
             nickName: nickName,
             email: email,

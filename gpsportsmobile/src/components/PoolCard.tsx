@@ -7,10 +7,10 @@ export interface PoolCardPros {
   id: string;
   code: string;
   title: string;
-  ownerId: string;
   createdAt: string;
   owner: {
     name: string;
+    ownerId: string;
   },
   participants: ParticipantProps[];
   _count: {
@@ -30,7 +30,7 @@ export function PoolCard({ data, ...rest }: Props) {
         h={20}
         bgColor="gray.800"
         borderBottomWidth={3}
-        borderBottomColor="yellow.500"
+        borderBottomColor="purple.500"
         justifyContent="space-between"
         alignItems="center"
         rounded="sm"
@@ -43,14 +43,13 @@ export function PoolCard({ data, ...rest }: Props) {
           </Heading>
 
           <Text color="gray.200" fontSize="xs">
-            Criado por {data.owner.name}
+            Criado por {data.owner?.name || 'Desconhecido'}
           </Text>
         </VStack>
-
-        <Participants
+ {/*        <Participants
           count={data._count.participants}
           participants={data.participants}
-        />
+        /> */}
       </HStack>
     </TouchableOpacity>
   );
