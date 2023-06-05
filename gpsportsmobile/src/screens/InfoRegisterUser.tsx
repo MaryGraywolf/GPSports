@@ -1,3 +1,4 @@
+import React from 'react';
 import { Center, Text, Icon, Heading, VStack, Pressable, Checkbox } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { Fontisto, MaterialIcons } from '@expo/vector-icons';
@@ -8,42 +9,52 @@ import { useAuth } from '../hooks/useAuth';
 
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, collection, getDocs, updateDoc , doc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, updateDoc, doc, where, query } from 'firebase/firestore';
 
-import React from 'react';
-
-export function InfoRegisterUser({ route }) {
+export function InfoRegisterUser() {
 
     const { navigate } = useNavigation();
 
+    const [user, setUsers] = React.useState([]);
     const [cidade, setCidade] = React.useState('');
     const [estado, setEstado] = React.useState('');
     const [esportes, setEsportes] = React.useState([]);
 
     const auth = getAuth(firebaseConfig);
     const db = getFirestore(firebaseConfig);
-    const userCollection = doc(db, 'users', auth.currentUser.uid);
+    const userCollectionAdd = doc(db, 'users', auth.currentUser.uid);
+    const userCollectionConsult = collection(db, 'users');
+
+    React.useEffect(() => {
+        const getUsers = async () => {
+
+            const dataUser = query(userCollectionConsult, where("id", "==", auth.currentUser.uid));
+            const querySnapshot = await getDocs(dataUser);
+            setUsers(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        };
+        getUsers();
+    }, []);
+
+    console.log(user);
 
     const setRegister = async () => {
         try {
-          const docRef = await updateDoc(userCollection, {
-            cidade: cidade,
-            estado: estado,
-            esportes: esportes
-          });
-          console.log("Documento criado no branco: ", docRef);
+            const docRef = await updateDoc(userCollectionAdd, {
+                cidade: cidade,
+                estado: estado,
+                esportes: esportes
+            });
+            console.log("Documento criado no branco: ", docRef);
 
-          console.log('Conta criada com sucesso!')
-          const user = auth.currentUser;
-          console.log(user);
-          navigate('pools');
+            console.log('Conta criada com sucesso!')
+            const user = auth.currentUser;
+            console.log(user);
+            navigate('pools');
 
         } catch (error) {
-          console.error("Erro ao criar o documento: ", error);
+            console.error("Erro ao criar o documento: ", error);
         }
-      }
-
-    const { name: userName } = route.params;
+    }
 
     return (
         <Center flex={1} bgColor="gray.900" p={7}>
@@ -52,14 +63,16 @@ export function InfoRegisterUser({ route }) {
                 GPSports
             </Text>
             {/* <Header title="Buscar evento esportivo" showBackButton/> */}
-
-            <VStack mt={8} mx={5} mb={8} alignItems="center">
-                <Heading fontFamily="heading" color="white" fontSize="16" textAlign="center">
-                    Olá {userName}, Por favor nos informe sua Cidade e seu Estado juntamente com seus esportes favoritos {'\n'}
-                    para que possamos mostrar para você todos os eventos que estão acontecendo perto de você!
-                </Heading>
-            </VStack>
-
+            {user.map((user) => {
+                return (
+                    <VStack mt={8} mx={5} mb={8} alignItems="center">
+                        <Heading fontFamily="heading" color="white" fontSize="16" textAlign="center">
+                            Olá {user.nickName}, por favor nos informe sua Cidade e seu Estado juntamente com seus esportes favoritos {'\n'}
+                            para que possamos mostrar para você todos os eventos que estão acontecendo perto de você!
+                        </Heading>
+                    </VStack>
+                );
+            })}
 
             <Input
                 mb={2}

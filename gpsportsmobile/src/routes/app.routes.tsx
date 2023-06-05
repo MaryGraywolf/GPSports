@@ -11,6 +11,7 @@ import { User } from '../screens/User';
 import { SignIn } from '../screens/SignIn';
 import { Register } from '../screens/Register';
 import { InfoRegisterUser } from '../screens/InfoRegisterUser';
+import { EmailVerification } from '../screens/EmailVerification';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -48,6 +49,16 @@ export function AppRoutes() {
       <Screen
         name="regi"
         component={Register}
+        options={{
+          tabBarButton: () => null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' }
+        }}
+      />
+
+      <Screen
+        name="email"
+        component={EmailVerification}
         options={{
           tabBarButton: () => null,
           headerShown: false,

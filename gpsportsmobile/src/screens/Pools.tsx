@@ -33,39 +33,6 @@ export function Pools() {
     const poolsCollection = collection(db, 'pools');
     const userCollection = collection(db, 'users');
 
-    useFocusEffect(
-        useCallback(() => {
-
-            const fetchUser = async () => {
-
-                const dataUser = query(userCollection, where("id", "==", auth.currentUser.uid));
-                const querySnapshot = await getDocs(dataUser);
-
-                const list = [];
-
-                querySnapshot.forEach((doc) => {
-
-                    const userData = {
-                        id: doc.id,
-                        user: {
-                            name: doc.data().name,
-                        }
-                    };
-
-                    list.push(userData);
-
-                });
-
-                setUser(list);
-
-            };
-
-            fetchUser();
-        }, [])
-    );
-
-        console.log(user);
-
     useEffect(() => {
             const fetchPools = async () => {
 
@@ -79,7 +46,7 @@ export function Pools() {
                     const userData = {
                         id: doc.id,
                         user: {
-                            name: doc.data().name,
+                            name: doc.data().nickName,
                         }
                     };
 

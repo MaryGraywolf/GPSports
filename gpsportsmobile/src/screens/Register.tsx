@@ -42,13 +42,17 @@ function RegisteConext() {
             nickName: nickName,
             email: email,
             password: password,
+            cidade: '',
+            estado: '',
+            esportes: []
           });
           console.log("Documento criado no branco: ", docRef);
 
           console.log('Conta criada com sucesso!')
           const user = auth.currentUser;
           console.log(user);
-          navigate('inforegisteruser', { name: nickName });
+          //navigate('inforegisteruser', { name: nickName });
+          navigate('email');
 
         } catch (error) {
           console.error("Erro ao criar o documento: ", error);
