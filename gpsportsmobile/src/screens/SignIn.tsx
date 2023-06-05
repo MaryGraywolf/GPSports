@@ -92,7 +92,7 @@ function SignInContext() {
       />
 
       <Text color="white" fontSize={14} mt={6} fontFamily="heading">
-        Ainda não membro?
+        Ainda não é membro?
       </Text>
       <Text color="purple.500" fontSize={14} fontFamily="heading" onPress={() => navigation.navigate('regi')}>Clique aqui para realizar seu cadastro!</Text>
 

@@ -20,20 +20,16 @@ export function Pools() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [pools, setPools] = useState([]);
-    const [user, setUser] = useState([]);
-
 
     const { navigate } = useNavigation();
-
-    const [email, setEmail] = useState('');
-    const [users, setUsers] = useState([]);
 
     const auth = getAuth(firebaseConfig);
     const db = getFirestore(firebaseConfig);
     const poolsCollection = collection(db, 'pools');
     const userCollection = collection(db, 'users');
 
-    useEffect(() => {
+    useFocusEffect(
+        useCallback(() => {
             const fetchPools = async () => {
 
                 const dataUser = query(userCollection, where("id", "==", auth.currentUser.uid));
@@ -70,7 +66,7 @@ export function Pools() {
                         owner: {
                             name: doc.data().owner.name,
                             ownerId: doc.data().owner.id,
-                          },
+                        },
                     };
 
                     participantList.push(poolData);
@@ -79,12 +75,13 @@ export function Pools() {
                 setPools(participantList);
                 setIsLoading(false);
                 //console.log(participants);
-            
+
             };
 
             fetchPools();
-        
-        }, []);
+
+        }, [])
+    );
 
     return (
         <VStack flex={1} bgColor="gray.900">
