@@ -36,7 +36,7 @@ function SendEmail() {
             <Icon as={MaterialIcons} name="email" color="purple.500" size={20} />
 
             <VStack mt={8} mx={5} mb={8} alignItems="center">
-                <Heading fontFamily="heading" color="white" fontSize="16" textAlign="center">
+                <Heading fontFamily="heading" color="white" fontSize="16px" textAlign="center">
                     Verifique seu e-mail para autenticar sua conta
                 </Heading>
             </VStack>

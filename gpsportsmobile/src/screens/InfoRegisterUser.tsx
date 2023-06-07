@@ -66,7 +66,7 @@ export function InfoRegisterUser() {
             {user.map((user) => {
                 return (
                     <VStack mt={8} mx={5} mb={8} alignItems="center">
-                        <Heading fontFamily="heading" color="white" fontSize="16" textAlign="center">
+                        <Heading fontFamily="heading" color="white" fontSize="16px" textAlign="center">
                             Olá {user.nickName}, por favor nos informe sua Cidade e seu Estado juntamente com seus esportes favoritos {'\n'}
                             para que possamos mostrar para você todos os eventos que estão acontecendo perto de você!
                         </Heading>

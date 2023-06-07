@@ -11,7 +11,7 @@ export function Find(){
             <Header title="Buscar evento esportivo" showBackButton/>
 
             <VStack mt={8} mx={5} alignItems="center">
-                <Heading fontFamily="heading" color="white" fontSize="20" textAlign="center">
+                <Heading fontFamily="heading" color="white" fontSize="20px" textAlign="center">
                    Encontrar um evento esportivo através do código
                 </Heading>
             </VStack>
