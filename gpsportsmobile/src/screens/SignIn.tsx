@@ -9,6 +9,7 @@ import React from 'react';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut} from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
+import { Alert } from 'react-native';
 
 function SignInContext() {
 
@@ -26,18 +27,20 @@ function SignInContext() {
 
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password).then(() => {
-      console.log('Login realizado com sucesso!')
       const user = auth.currentUser;
       console.log(user);
       if(email != ''){
         console.log(user.email);
       }
       //navigation.navigate('user', { email: user.uid});
-      navigation.navigate('new');
+      navigation.navigate('pools');
+      Alert.alert('Login realizado com sucesso!')
+      setEmail('')
+      setPassword('')
     })
       .catch((error) => {
         console.log(error);
-        alert(error.message);
+        Alert.alert("Informe seu email e sua senha corretamente")
       })
   }
 

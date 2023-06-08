@@ -13,6 +13,7 @@ import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { getAuth } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
+import { Alert } from 'react-native';
 
 
 export function New() {
@@ -35,7 +36,7 @@ export function New() {
     const [name, setName] = useState('');
     const [qtdPessoa, setQtdPessoa] = useState(0);
     const [particular, setParticular] = useState(false);
-    const [valor, setValor] = useState(0.0);
+    const [valor, setValor] = useState(0);
     const [obs, setObs] = useState('');
     const [cep, setCep] = useState(0);
     const [estado, setEstado] = useState('');
@@ -134,17 +135,30 @@ export function New() {
                 }]
 
             });
-            console.log("Documento criado no branco: ", docRef);
-
+            Alert.alert("Evento criado!");
             navigate('pools');
-
+            setEsporte('')
+            setName('')
+            setParticular(false)
+            setObs('')
+            setEstado('')
+            setCidade('')
+            setBairro('')
+            setRua('')
+            setRef('')
+            setQtdPessoa(0)
+            setValor(0)
+            setCep(0)
         } catch (error) {
             console.error("Erro ao criar o documento: ", error);
         }
     }
 
     return (
-        <ScrollView>
+        <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 100}}
+        bgColor="gray.900">
             <VStack flex={1} bgColor="gray.900">
                 <Header title="Criar evento esportivo" showBackButton />
 
@@ -160,6 +174,7 @@ export function New() {
                         mb={4}
                         placeholder='Qual nome do seu evento esportivo?'
                         onChangeText={e => setName(e)}
+                        value = {name}
                     />
                     <HStack alignItems="center">
                         <FormControl w={'55%'} mr={4}>
@@ -168,7 +183,6 @@ export function New() {
                                 onValueChange={itemValue => setEsporte(itemValue)}
                                 mb={4}
                                 h={14}
-
                                 bg={'gray.800'}
                                 color={'gray.300'}
                                 //borderColor={'gray.600'}
@@ -200,7 +214,9 @@ export function New() {
                     <HStack alignItems="center" justifyContent={'space-between'} w='80%'>
 
                         <VStack w={'30%'} mr={8}>
-                            <Switch size="md" onValueChange={itemValue => setParticular(itemValue)} />
+                            <Switch size="md" onValueChange={itemValue => setParticular(itemValue)} 
+                            value = {particular}
+                            />
                         </VStack>
 
                         <Input
@@ -222,7 +238,9 @@ export function New() {
                         px={4}
                         mx={5}
                         autoCompleteType={undefined}
-                        onChangeText={e => setObs(e)} />
+                        onChangeText={e => setObs(e)} 
+                        value = {obs}
+                        />
 
                     <HStack alignItems="center" justifyContent={'space-between'}>
                         <Input
@@ -256,6 +274,7 @@ export function New() {
                             w={'35%'}
                             placeholder='Número'
                             onChangeText={e => setRua(e)}
+                            value = {rua}
                         />
                     </HStack>
 
@@ -276,7 +295,9 @@ export function New() {
                         px={4}
                         mx={5}
                         autoCompleteType={undefined}
-                        onChangeText={e => setRef(e)} />
+                        onChangeText={e => setRef(e)}
+                        value = {ref}
+                        />
 
                     <Button
                         title="CRIAR MEU EVENTO"

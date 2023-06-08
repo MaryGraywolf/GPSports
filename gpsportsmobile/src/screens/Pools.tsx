@@ -112,8 +112,7 @@ export function Pools() {
                             }
                             ListEmptyComponent={<EmptyPoolList />}
                             showsVerticalScrollIndicator={false}
-                            _contentContainerStyle={{ pb: 10 }}
-                            px={5}
+                            contentContainerStyle={{ paddingBottom: 100 }}
                         />
                 }
 

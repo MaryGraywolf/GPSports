@@ -10,6 +10,7 @@ import React from 'react';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase-config';
 import { getFirestore, collection, getDocs, setDoc, doc } from 'firebase/firestore/lite';
+import { Alert } from 'react-native';
 
 
 function RegisteConext() {
@@ -47,15 +48,14 @@ function RegisteConext() {
             esportes: []
           });
           console.log("Documento criado no branco: ", docRef);
-
-          console.log('Conta criada com sucesso!')
           const user = auth.currentUser;
           console.log(user);
           //navigate('inforegisteruser', { name: nickName });
           navigate('email');
-
+          Alert.alert("Cadastro feito com sucesso")
         } catch (error) {
           console.error("Erro ao criar o documento: ", error);
+          Alert.alert("Preencha os campos corretamente")
         }
       }
 
@@ -63,7 +63,7 @@ function RegisteConext() {
     })
       .catch((error) => {
         console.log(error);
-        alert(error.message);
+        Alert.alert("Preencha os campos corretamente")
       })
   }
 

@@ -10,7 +10,7 @@ import { Header } from "../components/Header";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { PencilSimpleLine, SignOut } from 'phosphor-react-native';
-import { TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import React from 'react';
 
@@ -94,8 +94,11 @@ export function User({ route }) {
                 });
             }
         
-            alert("Informações alteradas com sucesso!");
+            Alert.alert("Informações alteradas com sucesso!");
             navigate('user');
+
+            setName('')
+            setEmail('')
         } catch (error) {
             console.error("Erro ao tentar alterar as informações", error);
         }
@@ -104,7 +107,10 @@ export function User({ route }) {
     console.log(name)
 
     return (
-        <ScrollView bgColor="gray.900">
+        <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 100}}
+        bgColor="gray.900">
          <VStack flex={1} bgColor="gray.900">
             <Header title="Perfil" showBackButton />
 
@@ -172,6 +178,7 @@ export function User({ route }) {
                 <Text fontSize="15px" color="purple.500" mt="3px" mb="5px" fontFamily="heading">ALTERAR NOME DE USUÁRIO</Text>
                 <Input placeholder='Digite seu novo nome'
                 onChangeText={n => setName(n)}
+                value = {name}
                 ></Input>              
             </VStack>  
 
@@ -179,6 +186,7 @@ export function User({ route }) {
                 <Text fontSize="15px" color="purple.500" mt="3px" mb="5px" fontFamily="heading">ALTERAR EMAIL</Text>
                 <Input placeholder='Digite seu novo email'
                 onChangeText={e => setEmail(e)}
+                value = {email}
                 ></Input>              
             </VStack>  
 
