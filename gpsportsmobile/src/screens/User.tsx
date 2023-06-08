@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Avatar, Center, HStack, Heading, Row, ScrollView, Text, TextArea, VStack } from 'native-base';
+import { Avatar, Center, HStack, Heading, Icon, Row, ScrollView, Text, TextArea, VStack } from 'native-base';
 import { Select as NativeBaseSelect } from "native-base";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
@@ -13,6 +13,7 @@ import { PencilSimpleLine, SignOut } from 'phosphor-react-native';
 import { Alert, TouchableOpacity } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import React from 'react';
+import MaterialIcons from '@expo/vector-icons/build/MaterialIcons';
 
 export function User({ route }) {
 
@@ -118,7 +119,7 @@ export function User({ route }) {
                     <TouchableOpacity>
                     <Avatar 
                         size='xl'
-                        source={{uri: 'https://www.nicepng.com/png/detail/46-465938_spider-man-png-rosto-do-homem-aranha.png'}}
+                        source={{uri: ''}}
                     />
                     </TouchableOpacity>
 
@@ -179,7 +180,8 @@ export function User({ route }) {
                 <Input placeholder='Digite seu novo nome'
                 onChangeText={n => setName(n)}
                 value = {name}
-                ></Input>              
+                InputRightElement={<Icon as={<MaterialIcons name="edit" />} size={5} mr="3" color="muted.400" />}
+                />             
             </VStack>  
 
             <VStack mt="5%" mx={5} alignItems="center" flexDirection="column" justifyContent="center">
@@ -187,7 +189,8 @@ export function User({ route }) {
                 <Input placeholder='Digite seu novo email'
                 onChangeText={e => setEmail(e)}
                 value = {email}
-                ></Input>              
+                InputRightElement={<Icon as={<MaterialIcons name="edit" />} size={5} mr="3" color="muted.400" />}
+                />           
             </VStack>  
 
             <VStack mt={5} mx={5} alignItems="center" flexDirection="column" justifyContent="center">
