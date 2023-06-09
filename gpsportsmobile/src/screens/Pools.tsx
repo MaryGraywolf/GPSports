@@ -11,8 +11,7 @@ import { EmptyPoolList } from '../components/EmptyPoolList';
 
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, addDoc, onSnapshot, query, where } from 'firebase/firestore';
-import { Participants } from '../components/Participants';
+import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 
 
 
@@ -50,7 +49,7 @@ export function Pools() {
 
                 });
 
-                const participantQuery = query(poolsCollection, where('participantes', '==', list));
+                const participantQuery = query(poolsCollection, where('participantes', 'array-contains-any', list));
                 const participantSnapshot = await getDocs(participantQuery);
 
                 const participantList = [];
@@ -62,6 +61,7 @@ export function Pools() {
                 participantSnapshot.forEach((doc) => {
                     const poolData = {
                         id: doc.id,
+                        code: doc.data().code,
                         title: doc.data().name,
                         owner: {
                             name: doc.data().owner.name,
@@ -89,7 +89,7 @@ export function Pools() {
 
             <VStack mt={6} mx={5} borderBottomWidth={1} borderBottomColor="gray.600" pb={4} mb={4}>
 
-                <Button title="BUSCAR EVENTO ESPORTIVO POR CÓDIGO"
+                <Button title="BUSCAR POR NOVOS EVENTOS"
                     leftIcon={<Icon as={Octicons} name="search" color="black" size="md" />}
                     onPress={() => navigate('find')}
                 />
@@ -107,12 +107,12 @@ export function Pools() {
                                 <PoolCard
                                     id={item.id}
                                     data={item}
-                                //onPress={() => navigate('details', { id: item.id })}
+                                onPress={() => navigate('details', { id: item.code })}
                                 />
                             }
                             ListEmptyComponent={<EmptyPoolList />}
                             showsVerticalScrollIndicator={false}
-                            contentContainerStyle={{ paddingBottom: 100 }}
+                            contentContainerStyle={{ paddingBottom: 20 }}
                         />
                 }
 

@@ -12,6 +12,7 @@ import { SignIn } from '../screens/SignIn';
 import { Register } from '../screens/Register';
 import { InfoRegisterUser } from '../screens/InfoRegisterUser';
 import { EmailVerification } from '../screens/EmailVerification';
+import { Details } from '../screens/Details';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -108,6 +109,13 @@ export function AppRoutes() {
       <Screen
         name="find"
         component={Find}
+        options={{ tabBarButton: () => null }}
+      />
+
+      <Screen
+        name="details"
+        component={Details}
+        initialParams={{ id: '' }}
         options={{ tabBarButton: () => null }}
       />
 
