@@ -17,17 +17,20 @@ import { Details } from '../screens/Details';
 const { Navigator, Screen } = createBottomTabNavigator();
 
 export function AppRoutes() {
-  const { colors } = useTheme();
+  const { colors, sizes } = useTheme();
+
+  const size = sizes[7];
 
   return (
     <Navigator
       screenOptions={{
         headerShown: false,
+        tabBarLabelPosition: 'beside-icon',
         tabBarActiveTintColor: colors.purple[500],
         tabBarInactiveTintColor: colors.gray[300],
         tabBarStyle: {
           position: 'absolute',
-          height: 64,
+          height: sizes[22],
           borderTopWidth: 0,
           backgroundColor: colors.gray[800],
         },
@@ -77,22 +80,22 @@ export function AppRoutes() {
           tabBarStyle: { display: 'none' }
         }}
       />
+      
+      <Screen
+        name="pools"
+        component={Pools}
+        options={{
+          tabBarIcon: ({ color }) => <SoccerBall color={color} size={size} />,
+          tabBarLabel: () => null
+        }}
+      />
 
       <Screen
         name="new"
         component={New}
         options={{
-          tabBarIcon: ({ color, size }) => <PlusCircle color={color} />,
-          tabBarLabel: ''
-        }}
-      />
-
-      <Screen
-        name="pools"
-        component={Pools}
-        options={{
-          tabBarIcon: ({ color, size }) => <SoccerBall color={color} />,
-          tabBarLabel: ''
+          tabBarIcon: ({ color }) => <PlusCircle color={color} size={size} />,
+          tabBarLabel: () => null
         }}
       />
 
@@ -101,8 +104,8 @@ export function AppRoutes() {
         component={User}
         initialParams={{ user: '' }} // Defina o tipo e o valor inicial do par�metro email
         options={{
-          tabBarIcon: ({ color, size }) => <UserCircle color={color} />,
-          tabBarLabel: ''
+          tabBarIcon: ({ color }) => <UserCircle color={color} size={size} />,
+          tabBarLabel: () => null
         }}
       />
 

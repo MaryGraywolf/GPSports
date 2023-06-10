@@ -54,10 +54,6 @@ export function Pools() {
 
                 const participantList = [];
 
-                console.log(participantSnapshot);
-                console.log(participantSnapshot.forEach((doc) => { console.log(doc.data()) }));
-                console.log(auth.currentUser.uid);
-
                 participantSnapshot.forEach((doc) => {
                     const poolData = {
                         id: doc.id,

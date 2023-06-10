@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Center, Heading, Text, VStack, Select, CheckIcon, TextArea, HStack, Switch, ScrollView, FormControl } from 'native-base';
+import { Center, Heading, Text, VStack, Select, CheckIcon, TextArea, HStack, Switch, ScrollView, FormControl, useToast } from 'native-base';
 import { Select as NativeBaseSelect } from "native-base";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
@@ -7,6 +7,8 @@ import { firebaseConfig } from '../../firebase-config';
 import { getFirestore, collection, getDocs, updateDoc, doc, setDoc, addDoc } from 'firebase/firestore';
 
 import { useTheme } from 'native-base';
+import { Loading } from '../components/Loading';
+
 
 import { Header } from "../components/Header";
 import { Input } from "../components/Input";
@@ -19,6 +21,7 @@ import { Alert } from 'react-native';
 export function New() {
 
     const { navigate } = useNavigation();
+    const toast = useToast();
 
     // Conexões com o Banco
 
@@ -61,13 +64,13 @@ export function New() {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let code = '';
         for (let i = 0; i < 6; i++) {
-          const randomIndex = Math.floor(Math.random() * characters.length);
-          code += characters.charAt(randomIndex);
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            code += characters.charAt(randomIndex);
         }
         return code;
-      }
+    }
 
-    const code = generateCode(); 
+    const code = generateCode();
 
     useFocusEffect(
         useCallback(() => {
@@ -95,11 +98,9 @@ export function New() {
             };
 
             fetchUser();
-            
+
         }, [])
     );
-
-    console.log(user);
 
     const setRegister = async () => {
 
@@ -135,8 +136,7 @@ export function New() {
                 }]
 
             });
-            Alert.alert("Evento criado!");
-            navigate('pools');
+            
             setEsporte('')
             setName('')
             setParticular(false)
@@ -149,16 +149,33 @@ export function New() {
             setQtdPessoa(0)
             setValor(0)
             setCep(0)
+
+            navigate('pools');
+
         } catch (error) {
-            console.error("Erro ao criar o documento: ", error);
+
+            toast.show({
+                title: 'Não foi possível criar o evento!',
+                placement: 'top',
+                bgColor: 'red.500'
+              });
+
+        } finally {
+
+            toast.show({
+                title: 'Evento Criado com sucesso!',
+                placement: 'top',
+                bgColor: 'green.500'
+            });
+
         }
     }
 
     return (
         <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 100}}
-        bgColor="gray.900">
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            bgColor="gray.900">
             <VStack flex={1} bgColor="gray.900">
                 <Header title="Criar evento esportivo" showBackButton />
 
@@ -174,7 +191,7 @@ export function New() {
                         mb={4}
                         placeholder='Qual nome do seu evento esportivo?'
                         onChangeText={e => setName(e)}
-                        value = {name}
+                        value={name}
                     />
                     <HStack alignItems="center">
                         <FormControl w={'55%'} mr={4}>
@@ -214,8 +231,8 @@ export function New() {
                     <HStack alignItems="center" justifyContent={'space-between'} w='80%'>
 
                         <VStack w={'30%'} mr={8}>
-                            <Switch size="md" onValueChange={itemValue => setParticular(itemValue)} 
-                            value = {particular}
+                            <Switch size="md" onValueChange={itemValue => setParticular(itemValue)}
+                                value={particular}
                             />
                         </VStack>
 
@@ -238,9 +255,9 @@ export function New() {
                         px={4}
                         mx={5}
                         autoCompleteType={undefined}
-                        onChangeText={e => setObs(e)} 
-                        value = {obs}
-                        />
+                        onChangeText={e => setObs(e)}
+                        value={obs}
+                    />
 
                     <HStack alignItems="center" justifyContent={'space-between'}>
                         <Input
@@ -274,7 +291,7 @@ export function New() {
                             w={'35%'}
                             placeholder='Número'
                             onChangeText={e => setRua(e)}
-                            value = {rua}
+                            value={rua}
                         />
                     </HStack>
 
@@ -296,12 +313,13 @@ export function New() {
                         mx={5}
                         autoCompleteType={undefined}
                         onChangeText={e => setRef(e)}
-                        value = {ref}
-                        />
+                        value={ref}
+                    />
 
                     <Button
                         title="CRIAR MEU EVENTO"
                         onPress={setRegister}
+                        
                     />
 
                     <Text color="gray.200" fontSize="sm" textAlign="center" px={10} mt={4}>

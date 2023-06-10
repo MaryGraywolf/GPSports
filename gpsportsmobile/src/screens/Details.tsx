@@ -17,82 +17,66 @@ import { getFirestore, collection, getDocs, query, where } from 'firebase/firest
 
 
 export function Details({ route }) {
-  const [optionSelected, setOptionSelected] = useState<'guesses' | 'ranking'>('guesses')
+  const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
   const [isLoading, setIsLoading] = useState(false);
   const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
 
   const db = getFirestore(firebaseConfig);
   const poolsCollection = collection(db, 'pools');
 
-
   const toast = useToast();
 
   const { id: userUid } = route.params;
 
-  console.log(userUid);
+  async function fetchPoolDetails() {
+    try {
+      setIsLoading(true);
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPools = async () => {
-        const detailsPoolsQuery = query(poolsCollection, where('code', '==', userUid));
+      const detailsPoolsQuery = query(poolsCollection, where('code', '==', userUid));
 
-        const detailsPoolsSnapshot = await getDocs(detailsPoolsQuery);
+      const detailsPoolsSnapshot = await getDocs(detailsPoolsQuery);
 
-        const detailsPoolsList = [];
+      const detailsPoolsList = [];
 
-        detailsPoolsSnapshot.forEach((doc) => {
-          const poolData = {
-            id: doc.id,
-            title: doc.data().name,
-            code: doc.data().code,
-          };
-          detailsPoolsList.push(poolData);
-        });
+      detailsPoolsSnapshot.forEach((doc) => {
+        const poolData = {
+          id: doc.id,
+          title: doc.data().name,
+          code: doc.data().code,
+        };
+        detailsPoolsList.push(poolData);
+      });
 
-        setPoolDetails(detailsPoolsList[0]);
+      setPoolDetails(detailsPoolsList[0]);
 
-      };
+    } catch (error) {
+      console.log(error);
+      toast.show({
+        title: 'Não foi possível carregar os dados do evento',
+        placement: 'top',
+        bgColor: 'red.500'
+      })
 
-      fetchPools();
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
-
-    }, [])
-  );
-
-
-  /*  async function fetchPoolDetails() {
-     try {
-       setIsLoading(true)
-       //const response = await api.get(`/pools/${id}`);
-       //setPoolDetails(response.data.pool);
-     } catch (error) {
-       console.log(error);
-       toast.show({
-         title: 'Não foi possível carregar os detalhes do bolão',
-         placement: 'top',
-         bgColor: 'red.500'
-       })
- 
-     } finally {
-       setIsLoading(false);
-     }
-   } */
-
-  /* async function handleCodeShare() {
+  async function handleCodeShare() {
     await Share.share({
-      message: poolDetails.code
+      message: 'Esse aqui é o código do meu evento esportivo: ' + poolDetails.code
     })
-  } */
+  }
 
-  /* useEffect(() => {
+  useEffect(() => {
     fetchPoolDetails();
-  }, [id]) */
+  }, [userUid])
 
-  /* if (isLoading) {
+  if (isLoading) {
     return (
       <Loading />
     )
-  } */
+  }
 
   return (
     <VStack flex={1} bgColor="gray.900">
@@ -100,7 +84,7 @@ export function Details({ route }) {
         title={poolDetails.title}
         showBackButton
         showShareButton
-      //onShare={handleCodeShare}
+        onShare={handleCodeShare}
       />
 
 
@@ -109,21 +93,24 @@ export function Details({ route }) {
 
         <HStack bgColor="gray.800" p={1} rounded="sm" mb={8}>
           <Option
-            title='Informa��es Gerais'
-            isSelected={optionSelected === 'guesses'}
-            onPress={() => setOptionSelected('guesses')}
+            title='Informações Gerais'
+            isSelected={optionSelected === 'infoGeral'}
+            onPress={() => setOptionSelected('infoGeral')}
           />
           <Option
             title='Participantes'
-            isSelected={optionSelected === 'ranking'}
-            onPress={() => setOptionSelected('ranking')}
+            isSelected={optionSelected === 'participantes'}
+            onPress={() => setOptionSelected('participantes')}
           />
         </HStack>
 
-        {/* <Guesses poolId={poolDetails.id} code={poolDetails.code} /> */}
+
+        {optionSelected === 'infoGeral' ? <Guesses poolId={poolDetails.code} />
+          : <EmptyMyPoolList code={poolDetails.code} />}
+
       </VStack>
 
-      {/* <EmptyMyPoolList code={poolDetails.code} /> */}
+
 
     </VStack>
   );

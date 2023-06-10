@@ -1,4 +1,4 @@
-import { Center, Text, Icon, Pressable, Heading, VStack } from 'native-base';
+import { Center, Text, Icon, Pressable, Heading, VStack, useToast } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { Fontisto, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { Button } from '../components/Button';
@@ -6,41 +6,56 @@ import { Input } from "../components/Input";
 import { useAuth } from '../hooks/useAuth';
 
 import React from 'react';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut} from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
 import { Alert } from 'react-native';
 
-function SignInContext() {
+
+export function SignIn() {
 
   const navigation = useNavigation();
 
   const { signIn, user } = useAuth();
 
   const [show, setShow] = React.useState(false);
+  const toast = useToast();
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
   const [id, setId] = React.useState('');
 
   const auth = getAuth(firebaseConfig);
 
   const handleSignIn = () => {
+
+    setIsLoading(true);
+
     signInWithEmailAndPassword(auth, email, password).then(() => {
-      const user = auth.currentUser;
-      console.log(user);
-      if(email != ''){
-        console.log(user.email);
-      }
-      //navigation.navigate('user', { email: user.uid});
+
       navigation.navigate('pools');
-      Alert.alert('Login realizado com sucesso!')
+
+      toast.show({
+        title: 'Login realizado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.500'
+      })
+
       setEmail('')
       setPassword('')
-    })
-      .catch((error) => {
-        console.log(error);
-        Alert.alert("Informe seu email e sua senha corretamente")
+      setIsLoading(false);
+
+    }).catch((error) => {
+
+        toast.show({
+          title: 'Email ou senha incorretos!',
+          placement: 'top',
+          bgColor: 'red.500'
+        })
+
+        setIsLoading(false);
+
       })
   }
 
@@ -85,6 +100,7 @@ function SignInContext() {
         mt={10}
         mb={4}
         onPress={handleSignIn}
+        isLoading={isLoading}
       />
 
       <Button
@@ -100,14 +116,6 @@ function SignInContext() {
       <Text color="purple.500" fontSize={14} fontFamily="heading" onPress={() => navigation.navigate('regi')}>Clique aqui para realizar seu cadastro!</Text>
 
     </Center>
-  );
-}
-
-
-export function SignIn() {
-
-  return (
-    <SignInContext />
   );
 
 }

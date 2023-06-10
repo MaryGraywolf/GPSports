@@ -9,7 +9,9 @@ export declare global {
             sign: undefined;
             regi: undefined;
             inforegisteruser: undefined;
-            details: undefined;
+            details: { 
+                id: string;
+            };
             email: undefined;
         }
 

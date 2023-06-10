@@ -119,7 +119,7 @@ export function User({ route }) {
                     <TouchableOpacity>
                     <Avatar 
                         size='xl'
-                        source={{uri: ''}}
+                        source={{uri: 'https://i.pinimg.com/564x/cb/2f/4c/cb2f4c83f7a4ae488beae68d7d8a02a0.jpg'}}
                     />
                     </TouchableOpacity>
 
@@ -133,7 +133,7 @@ export function User({ route }) {
                     </Center>
                 </VStack>
 
-            <VStack flexDirection="row" mx={5}  justifyContent="space-between" height="12%">
+            <VStack flexDirection="row" mx={5}  justifyContent={'space-between'} height="12%">
 
                 <VStack mt={8} alignItems="center" width="48%"  bgColor="gray.600" borderRadius={5}>
                 <Text fontSize="15px" mt="2" color="purple.500" fontFamily="heading">ESPORTE FAVORITO</Text>
@@ -148,7 +148,7 @@ export function User({ route }) {
                     <Text fontSize="15px" mt="2" color="purple.500" fontFamily="heading">ESTADO</Text>
                     {pools.map((pool) => {
                             return (
-                            <Text fontSize="15x" color="white" mt="2px" fontFamily="heading">{pool.estado}</Text>
+                            <Text fontSize="15px" color="white" mt="2px" fontFamily="heading">{pool.estado}</Text>
                             );
                         })}   
                 </VStack>
@@ -157,7 +157,7 @@ export function User({ route }) {
 
             <VStack mt="5%" mx={5} alignItems="center" borderRadius={5}>
 
-                <Text fontSize="15px" color="purple.500" mt="3px" mb="5px" fontFamily="heading" justifyContent="">SOBRE MIM</Text>
+                <Text fontSize="15px" color="purple.500" mt="3px" mb="5px" fontFamily="heading" justifyContent={'space-between'}>SOBRE MIM</Text>
 
                 <TextArea h={20}
                     placeholder="Descreva algo sobre você..."

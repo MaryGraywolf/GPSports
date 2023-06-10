@@ -19,6 +19,7 @@ export function Find() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [pools, setPools] = useState([]);
+    const [search, setSearch] = useState('');
 
     const { navigate } = useNavigation();
 
@@ -115,7 +116,10 @@ export function Find() {
             contentContainerStyle={{ paddingBottom: 100 }}
             bgColor="gray.900">
             <VStack flex={1} bgColor="gray.900">
-                <Header title="Buscar evento esportivo" showBackButton />
+                <Header 
+                    title="Buscar evento esportivo" 
+                    showBackButton
+                    />
 
                 <VStack mt={8} mx={5} alignItems="center">
                     <Heading fontFamily="heading" color="white" fontSize="md" textAlign="center">
@@ -126,10 +130,12 @@ export function Find() {
                     <Input
                         mb={2}
                         placeholder='Qual o código do seu evento esportivo?'
+                        onChangeText={(text) => setSearch(text)}
                     />
 
                     <Button
                         title="BUSCAR EVENTO ESPORTIVO"
+                        onPress={() => navigate('details', { id: search })}
                     />
 
                 </VStack>
