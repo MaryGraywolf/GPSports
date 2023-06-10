@@ -8,7 +8,7 @@ export function EmptyMyPoolList({ code }: Props) {
   return (
     <Row flexWrap="wrap" justifyContent="center" p={4}>
       <Text color="gray.200" fontSize="sm">
-        Esse bolão ainda não tem participantes, que tal 
+        Esse evento ainda não tem participantes, que tal 
       </Text>
 
       <Pressable onPress={() => {}}>
@@ -18,7 +18,7 @@ export function EmptyMyPoolList({ code }: Props) {
       </Pressable>
 
       <Text color="gray.200" fontSize="sm" mx={1}>
-        do bolão com alguém?
+        do evento com alguém?
       </Text>
 
       <Text color="gray.200" mr={1}>
