@@ -83,13 +83,31 @@ export function Find() {
                     allPoolsSnapshot.forEach((doc) => {
                         const poolData = {
                             id: doc.id,
-                            title: doc.data().name,
                             code: doc.data().code,
+                            title: doc.data().name,
                             owner: {
                                 name: doc.data().owner.name,
                                 ownerId: doc.data().owner.id,
                             },
+                            participants: [], // inicializa como um array vazio
+                            _count: {
+                                participants: doc.data().participantes.length,
+                            }
                         };
+    
+                        doc.data().participantes.forEach((participant) => {
+                            const participantData = {
+                                id: participant.id,
+                                user: {
+                                    name: participant.user.name,
+                                    avatarUrl: participant.user.avatarUrl,
+                                }
+                            };
+    
+                            console.log(participantData);
+    
+                            poolData.participants.push(participantData);
+                        });
                         allPools.push(poolData);
                     });
                 }

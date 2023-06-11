@@ -41,7 +41,6 @@ export function Pools() {
                     const userData = {
                         id: doc.id,
                         user: {
-                            avatarUrl: doc.data().img,
                             name: doc.data().nickName,
                         }
                     };
@@ -65,8 +64,11 @@ export function Pools() {
                             ownerId: doc.data().owner.id,
                         },
                         participants: [], // inicializa como um array vazio
+                        _count: {
+                            participants: doc.data().participantes.length,
+                        }
                     };
-                
+
                     doc.data().participantes.forEach((participant) => {
                         const participantData = {
                             id: participant.id,
@@ -75,15 +77,17 @@ export function Pools() {
                                 avatarUrl: participant.user.avatarUrl,
                             }
                         };
-                
+
+                        console.log(participantData);
+
                         poolData.participants.push(participantData);
                     });
-
                     participantList.push(poolData);
                 });
 
                 setPools(participantList);
                 setIsLoading(false);
+                //console.log(participants);
 
             };
 
@@ -121,7 +125,7 @@ export function Pools() {
                             }
                             ListEmptyComponent={<EmptyPoolList />}
                             showsVerticalScrollIndicator={false}
-                            contentContainerStyle={{ paddingBottom: 100 }}
+                            contentContainerStyle={{ paddingBottom: 20 }}
                         />
                 }
 

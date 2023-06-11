@@ -112,6 +112,11 @@ export function Guesses({ poolId }: Props) {
 
             </HStack>
 
+            <VStack mt={4} alignItems="center">
+              <Heading color="white" fontSize="md" fontFamily="heading"> Rua/Avenida </Heading>
+              <Text color="gray.300" fontSize="sm" fontFamily="heading"> {user.rua} </Text>
+            </VStack>
+
             <HStack alignItems="center" justifyContent={'space-between'} mt={4}>
               <VStack alignItems="center" mx={2}>
                 <Heading color="white" fontSize="md" fontFamily="heading"> Bairro </Heading>
@@ -120,7 +125,7 @@ export function Guesses({ poolId }: Props) {
 
               <VStack alignItems="center" mx={2}>
                 <Heading color="white" fontSize="md" fontFamily="heading"> Número </Heading>
-                <Text color="gray.300" fontSize="sm" fontFamily="heading"> {user.rua} </Text>
+                <Text color="gray.300" fontSize="sm" fontFamily="heading"> {user.numero} </Text>
               </VStack>
             </HStack>
 

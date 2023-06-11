@@ -1,4 +1,4 @@
-import { Center, Text, Icon, Heading, VStack, Pressable } from 'native-base';
+import { Center, Text, Icon, Heading, VStack, Pressable, useToast } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -9,14 +9,20 @@ import { getAuth, sendEmailVerification } from 'firebase/auth';
 
 function SendEmail() {
 
+    const toast = useToast();
+
     const auth = getAuth(firebaseConfig); // Obtenha a inst�ncia do objeto de autentica��o
     const navigation = useNavigation();
 
     // Verifique se o usu�rio est� autenticado e o e-mail est� verificado
-    if (auth.currentUser && !auth.currentUser.emailVerified) {
+    if (auth.currentUser && auth.currentUser.emailVerified == false) {
         sendEmailVerification(auth.currentUser)
             .then(() => {
-                console.log('E-mail de verificação enviado com sucesso.');
+                toast.show({
+                    title: 'E-mail de verificação enviado!',
+                    placement: 'top',
+                    bgColor: 'green.500'
+                  })
             })
             .catch((error) => {
                 console.error('Erro ao enviar o e-mail de verificação:', error);

@@ -1,10 +1,10 @@
 import { useCallback, useState, useEffect } from 'react';
 import { Share } from 'react-native';
 import { HStack, ScrollView, useToast, VStack } from 'native-base';
-import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import { Header } from '../components/Header';
 import { Loading } from '../components/Loading';
+import { Button } from '../components/Button';
 import { PoolCardPros } from '../components/PoolCard';
 import { PoolHeader } from '../components/PoolHeader';
 import { EmptyMyPoolList } from '../components/EmptyMyPoolList';
@@ -13,58 +13,97 @@ import { Guesses } from '../components/Guesses';
 
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
-
+import { getFirestore, collection, getDocs, query, where, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 export function Details({ route }) {
   const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
   const [isLoading, setIsLoading] = useState(false);
   const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
+  const [status, setStatus] = useState(true);
+  const [user, setUsers] = useState([]);
 
   const db = getFirestore(firebaseConfig);
+  const auth = getAuth(firebaseConfig);
   const poolsCollection = collection(db, 'pools');
+  const userCollectionConsult = collection(db, 'users');
 
   const toast = useToast();
 
   const { id: userUid } = route.params;
 
+  useEffect(() => {
+    fetchPoolDetails();
+  }, [userUid])
+
+  if (isLoading) {
+    return (
+      <Loading />
+    )
+  }
+
+  async function handleJoinPool() {
+
+    const detailsPoolsQuery = query(poolsCollection, where('code', '==', userUid));
+
+    const detailsPoolsSnapshot = await getDocs(detailsPoolsQuery);
+
+    const detailsPoolsList = [];
+
+    detailsPoolsSnapshot.forEach((doc) => {
+      const poolData = {
+        id: doc.id,
+        code: doc.data().code,
+        title: doc.data().name,
+        owner: {
+          name: doc.data().owner.name,
+          ownerId: doc.data().owner.id,
+        },
+        participants: [], // inicializa como um array vazio
+        _count: {
+          participants: doc.data().participantes.length,
+        }
+      };
+
+      doc.data().participantes.forEach((participant) => {
+        const participantData = {
+          id: participant.id,
+          user: {
+            name: participant.user.name,
+            avatarUrl: participant.user.avatarUrl,
+          }
+        };
+
+        poolData.participants.push(participantData);
+      });
+
+      detailsPoolsList.push(poolData);
+    });
+
+    setPoolDetails(detailsPoolsList[0]);
+  }
+
+  async function consultUser() {
+
+    const dataUser = query(userCollectionConsult, where("id", "==", auth.currentUser.uid));
+    const querySnapshot = await getDocs(dataUser);
+    setUsers(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+  }
+
   async function fetchPoolDetails() {
     try {
       setIsLoading(true);
+      setStatus(true);
 
-      const detailsPoolsQuery = query(poolsCollection, where('code', '==', userUid));
+      await handleJoinPool();
 
-      const detailsPoolsSnapshot = await getDocs(detailsPoolsQuery);
+      for (let i = 0; i < poolDetails.participants.length; i++) {
+        if (poolDetails.participants[i].id === auth.currentUser.uid) {
+          setStatus(false);
+        }
+      }
 
-      const detailsPoolsList = [];
-
-      detailsPoolsSnapshot.forEach((doc) => {
-        const poolData = {
-          id: doc.id,
-          code: doc.data().code,
-          title: doc.data().name,
-          owner: {
-              name: doc.data().owner.name,
-              ownerId: doc.data().owner.id,
-          },
-          participants: [], // inicializa como um array vazio
-      };
-  
-      doc.data().participantes.forEach((participant) => {
-          const participantData = {
-              id: participant.id,
-              user: {
-                  name: participant.user.name,
-                  avatarUrl: participant.user.avatarUrl,
-              }
-          };
-  
-          poolData.participants.push(participantData);
-      });
-        detailsPoolsList.push(poolData);
-      });
-
-      setPoolDetails(detailsPoolsList[0]);
+      await consultUser();
 
     } catch (error) {
       console.log(error);
@@ -79,21 +118,45 @@ export function Details({ route }) {
     }
   }
 
+  async function registerPool() {
+    try {
+
+      const userCollectionAdd = doc(db, 'pools', poolDetails.id);
+
+      const docRef = await updateDoc(userCollectionAdd, {
+        participantes: arrayUnion({
+          id: auth.currentUser.uid,
+          user: {
+            name: user[0].nickName,
+          }
+        })
+      });
+
+      toast.show({
+        title: 'Inscrição realizada com sucesso',
+        placement: 'top',
+        bgColor: 'green.500'
+      })
+
+      setStatus(false);
+
+    } catch (erro) {
+      console.log(erro);
+
+      toast.show({
+        title: 'Não foi possível se inscrever no evento',
+        placement: 'top',
+        bgColor: 'red.500'
+      })
+    }
+  }
+
   async function handleCodeShare() {
     await Share.share({
       message: 'Esse aqui é o código do meu evento esportivo: ' + poolDetails.code
     })
   }
 
-  useEffect(() => {
-    fetchPoolDetails();
-  }, [userUid])
-
-  if (isLoading) {
-    return (
-      <Loading />
-    )
-  }
 
   return (
     <ScrollView
@@ -129,9 +192,9 @@ export function Details({ route }) {
           {optionSelected === 'infoGeral' ? <Guesses poolId={poolDetails.code} />
             : <EmptyMyPoolList code={poolDetails.code} />}
 
+          {status == true ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool}/> : <></>}
+
         </VStack>
-
-
 
       </VStack>
     </ScrollView>

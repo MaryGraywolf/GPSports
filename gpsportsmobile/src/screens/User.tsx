@@ -14,7 +14,6 @@ import { Alert, TouchableOpacity } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import React from 'react';
 import MaterialIcons from '@expo/vector-icons/build/MaterialIcons';
-import * as ImagePicker from 'expo-image-picker';
 
 export function User({ route }) {
 
@@ -23,7 +22,6 @@ export function User({ route }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [users, setUsers] = useState([]);
-    const [pools, setPools] = useState([]);
     const [bio, setBio] = useState('');
 
     const auth = getAuth(firebaseConfig);
@@ -47,30 +45,15 @@ export function User({ route }) {
                     const userData = {
                         id: doc.id,
                         name: doc.data().name,
-                        img: doc.data().img
+                        esports: [
+                            doc.data().esportes
+                        ],
+                        estado: doc.data().estado,
                     };
                 
                     list.push(userData);
                 });
 
-                const participantQuery = query(poolsCollection, where('owner.id', '==', auth.currentUser.uid));
-                const participantSnapshot = await getDocs(participantQuery);
-
-                const participantList = [];
-                
-                participantSnapshot.forEach((doc) => {
-                    const poolData = {
-                        esporte: doc.data().esporte,
-                        estado: doc.data().estado
-                    };
-
-                    if(participantList.length > 0)
-                        return;
-
-                    participantList.push(poolData);                 
-                });   
-
-                setPools(participantList);
                 setUsers(list)
             };
 
@@ -80,10 +63,6 @@ export function User({ route }) {
 
     const setRegister = async () => {
         try {
-
-            if(email === '' && name === ''){
-                throw alert("Informe um email ou um nome")
-            }
 
             if(email != ''){
                 const updateEmail = await updateDoc(userDocCollection, {
@@ -107,6 +86,8 @@ export function User({ route }) {
         }
     }
 
+    console.log(name)
+
     return (
         <ScrollView 
         showsVerticalScrollIndicator={false}
@@ -119,7 +100,7 @@ export function User({ route }) {
                     <TouchableOpacity>
                     <Avatar 
                         size='xl'
-                        source={{uri: users[0]?.img}}
+                        source={{uri: 'https://i.pinimg.com/564x/cb/2f/4c/cb2f4c83f7a4ae488beae68d7d8a02a0.jpg'}}
                     />
                     </TouchableOpacity>
 
@@ -137,18 +118,18 @@ export function User({ route }) {
 
                 <VStack mt={8} alignItems="center" width="48%"  bgColor="gray.600" borderRadius={5}>
                 <Text fontSize="15px" mt="2" color="purple.500" fontFamily="heading">ESPORTE FAVORITO</Text>
-                        {pools.map((pool) => {
+                        {users.map((user) => {
                             return (
-                            <Text fontSize="15px" color="white" mt="2px" fontFamily="heading">{pool.esporte}</Text>
+                            <Text fontSize="15px" color="white" mt="2px" fontFamily="heading">{user.esports.join(", ")} </Text>
                             );
                         })}                                       
                 </VStack>
 
                 <VStack mt={8} alignItems="center" width="48%"  bgColor="gray.600" borderRadius={5}>
                     <Text fontSize="15px" mt="2" color="purple.500" fontFamily="heading">ESTADO</Text>
-                    {pools.map((pool) => {
+                    {users.map((user) => {
                             return (
-                            <Text fontSize="15px" color="white" mt="2px" fontFamily="heading">{pool.estado}</Text>
+                            <Text fontSize="15px" color="white" mt="2px" fontFamily="heading">{user.estado}</Text>
                             );
                         })}   
                 </VStack>

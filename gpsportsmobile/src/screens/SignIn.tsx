@@ -10,6 +10,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
 import { Alert } from 'react-native';
+import { EmailVerification } from './EmailVerification';
 
 
 export function SignIn() {
@@ -34,15 +35,23 @@ export function SignIn() {
 
     signInWithEmailAndPassword(auth, email, password).then(() => {
 
-      //navigation.navigate('pools'); 
+      if (auth.currentUser.emailVerified == false) {
 
-      navigation.navigate('inforegisteruser');
+        navigation.navigate('email');
+        
+      } else {
 
-      toast.show({
-        title: 'Login realizado com sucesso!',
-        placement: 'top',
-        bgColor: 'green.500'
-      })
+        navigation.navigate('pools');
+
+        //navigation.navigate('inforegisteruser');
+
+        toast.show({
+          title: 'Login realizado com sucesso!',
+          placement: 'top',
+          bgColor: 'green.500'
+        })
+
+      }
 
       setEmail('')
       setPassword('')
@@ -50,15 +59,15 @@ export function SignIn() {
 
     }).catch((error) => {
 
-        toast.show({
-          title: 'Email ou senha incorretos!',
-          placement: 'top',
-          bgColor: 'red.500'
-        })
-
-        setIsLoading(false);
-
+      toast.show({
+        title: 'Email ou senha incorretos!',
+        placement: 'top',
+        bgColor: 'red.500'
       })
+
+      setIsLoading(false);
+
+    })
   }
 
   return (

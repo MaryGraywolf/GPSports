@@ -1,4 +1,4 @@
-import { Center, Text, Icon, Heading, VStack, Pressable } from 'native-base';
+import { Center, Text, Icon, Heading, VStack, Pressable, useToast } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { Fontisto, MaterialIcons } from '@expo/vector-icons';
 import { Button } from "../components/Button";
@@ -15,9 +15,11 @@ import { Alert } from 'react-native';
 
 function RegisteConext() {
 
+  const toast = useToast();
   const { navigate } = useNavigation();
 
   const [show, setShow] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -29,6 +31,9 @@ function RegisteConext() {
   const db = getFirestore(firebaseConfig);
 
   const handleCreateAccount = () => {
+
+    setIsLoading(true);
+
     createUserWithEmailAndPassword(auth, email, password).then(() => {
 
       const userCollection = doc(db, 'users', auth.currentUser.uid);
@@ -37,6 +42,7 @@ function RegisteConext() {
 
       const setRegister = async () => {
         try {
+
           const docRef = await setDoc(userCollection, {
             id: auth.currentUser.uid,
             name: name,
@@ -48,14 +54,26 @@ function RegisteConext() {
             esportes: []
           });
           console.log("Documento criado no branco: ", docRef);
-          const user = auth.currentUser;
-          console.log(user);
-          //navigate('inforegisteruser', { name: nickName });
-          navigate('email');
-          Alert.alert("Cadastro feito com sucesso")
+
+          navigate('inforegisteruser');
+
+          toast.show({
+            title: 'Registro realizado com sucesso!',
+            placement: 'top',
+            bgColor: 'green.500'
+          })
+
         } catch (error) {
           console.error("Erro ao criar o documento: ", error);
-          Alert.alert("Preencha os campos corretamente")
+
+          toast.show({
+            title: 'Erro ao tentar fazer registro!',
+            placement: 'top',
+            bgColor: 'red.500'
+          })
+
+        } finally {
+          setIsLoading(false);
         }
       }
 
@@ -63,7 +81,13 @@ function RegisteConext() {
     })
       .catch((error) => {
         console.log(error);
-        Alert.alert("Preencha os campos corretamente")
+
+        toast.show({
+          title: 'Preencha os campos corretamente!',
+          placement: 'top',
+          bgColor: 'red.500'
+        })
+
       })
   }
 
@@ -137,6 +161,7 @@ function RegisteConext() {
       <Button
         title="CADASTRAR-SE"
         onPress={handleCreateAccount}
+        isLoading={isLoading}
         mt={4}
       />
 

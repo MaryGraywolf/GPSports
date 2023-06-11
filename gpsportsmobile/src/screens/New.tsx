@@ -23,6 +23,8 @@ export function New() {
     const { navigate } = useNavigation();
     const toast = useToast();
 
+    const [isLoading, setIsLoading] = useState(false);
+
     // Conexões com o Banco
 
     const auth = getAuth(firebaseConfig);
@@ -45,6 +47,7 @@ export function New() {
     const [estado, setEstado] = useState('');
     const [cidade, setCidade] = useState('');
     const [bairro, setBairro] = useState('');
+    const [num, setNum] = useState('');
     const [rua, setRua] = useState('');
     const [ref, setRef] = useState('');
 
@@ -87,7 +90,6 @@ export function New() {
                     const userData = {
                         id: doc.id,
                         name: doc.data().nickName,
-                        img: doc.data().img,
                     };
 
                     list.push(userData);
@@ -106,6 +108,8 @@ export function New() {
     const setRegister = async () => {
 
         try {
+
+            setIsLoading(true);
 
             if (!validateFields()) {
                 return;
@@ -127,30 +131,17 @@ export function New() {
                 estado: estado,
                 cidade: cidade,
                 bairro: bairro,
+                numero: num,
                 rua: rua,
                 ref: ref,
                 participantes: [{
                     id: user[0].id,
                     user: {
                         name: user[0].name,
-                        avatarUrl: user[0].img,
                     }
                 }]
 
             });
-            
-            setEsporte('')
-            setName('')
-            setParticular(false)
-            setObs('')
-            setEstado('')
-            setCidade('')
-            setBairro('')
-            setRua('')
-            setRef('')
-            setQtdPessoa(0)
-            setValor(0)
-            setCep(0)
 
             navigate('pools');
 
@@ -161,6 +152,30 @@ export function New() {
                 placement: 'top',
                 bgColor: 'red.500'
               });
+
+        } finally {
+
+            setIsLoading(false);
+
+            setEsporte('')
+            setName('')
+            setParticular(false)
+            setObs('')
+            setEstado('')
+            setCidade('')
+            setBairro('')
+            setNum('')
+            setRua('')
+            setRef('')
+            setQtdPessoa(null)
+            setValor(null)
+            setCep(null)
+
+            toast.show({
+                title: 'Evento Criado com sucesso!',
+                placement: 'top',
+                bgColor: 'green.500'
+            });
 
         }
     }
@@ -202,6 +217,10 @@ export function New() {
                                 <Select.Item label="Futebol" value="Futebol" />
                                 <Select.Item label="Vôlei" value="Volei" />
                                 <Select.Item label="Basquete" value="Basquete" />
+                                <Select.Item label="Tênis" value="Tenis" />
+                                <Select.Item label="Surf" value="Surf" />
+                                <Select.Item label="Boxe" value="Boxe" />
+
                             </Select>
                         </FormControl>
 
@@ -284,10 +303,17 @@ export function New() {
                             mb={4}
                             w={'35%'}
                             placeholder='Número'
-                            onChangeText={e => setRua(e)}
-                            value={rua}
+                            onChangeText={e => setNum(e)}
+                            value={num}
                         />
                     </HStack>
+
+                    <Input
+                        mb={4}
+                        placeholder='Rua/Avenida'
+                        value={rua}
+                        onChangeText={e => setRua(e)}
+                    />
 
                     <Input
                         mb={4}
@@ -313,7 +339,7 @@ export function New() {
                     <Button
                         title="CRIAR MEU EVENTO"
                         onPress={setRegister}
-                        
+                        isLoading={isLoading}
                     />
 
                     <Text color="gray.200" fontSize="sm" textAlign="center" px={10} mt={4}>

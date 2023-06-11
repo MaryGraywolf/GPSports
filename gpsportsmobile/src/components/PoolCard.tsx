@@ -23,6 +23,9 @@ interface Props extends TouchableOpacityProps {
 }
 
 export function PoolCard({ data, ...rest }: Props) {
+
+  console.log('verificando dados ' + data.participants);
+
   return (
     <TouchableOpacity {...rest}>
       <HStack
@@ -47,9 +50,9 @@ export function PoolCard({ data, ...rest }: Props) {
           </Text>
         </VStack>
         <Participants
-          //count={data._count.participants}
+          count={data._count.participants}
           participants={data.participants}
-        /> 
+        />
       </HStack>
     </TouchableOpacity>
   );
