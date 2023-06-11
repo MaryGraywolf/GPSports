@@ -19,7 +19,7 @@ export function Details({ route }) {
   const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
   const [isLoading, setIsLoading] = useState(false);
   const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
-  const [status, setStatus] = useState(true);
+  const [status, setStatus] = useState(false);
   const [user, setUsers] = useState([]);
 
   const db = getFirestore(firebaseConfig);
@@ -88,18 +88,28 @@ export function Details({ route }) {
     const querySnapshot = await getDocs(dataUser);
     setUsers(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
+    
+
   }
 
   async function fetchPoolDetails() {
     try {
       setIsLoading(true);
-      setStatus(true);
 
       await handleJoinPool();
+
+      console.log(auth.currentUser.uid);
 
       for (let i = 0; i < poolDetails.participants.length; i++) {
         if (poolDetails.participants[i].id === auth.currentUser.uid) {
           setStatus(false);
+
+          break;
+
+        }else{
+
+          setStatus(true);
+
         }
       }
 
@@ -192,7 +202,7 @@ export function Details({ route }) {
           {optionSelected === 'infoGeral' ? <Guesses poolId={poolDetails.code} />
             : <EmptyMyPoolList code={poolDetails.code} />}
 
-          {status == true ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool}/> : <></>}
+          {status === true ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool}/> : <></>}
 
         </VStack>
 
