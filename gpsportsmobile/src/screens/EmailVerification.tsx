@@ -1,15 +1,10 @@
 import { Center, Text, Icon, Heading, VStack, Pressable } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
-import { Fontisto, MaterialIcons } from '@expo/vector-icons';
-import { Button } from "../components/Button";
-import { Header } from "../components/Header";
-import { Input } from "../components/Input";
-import { useAuth } from '../hooks/useAuth';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import React from 'react';
 import { firebaseConfig } from '../../firebase-config';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { getFirestore, collection, getDocs, updateDoc, doc, where, query } from 'firebase/firestore';
+import { getAuth, sendEmailVerification } from 'firebase/auth';
 
 
 function SendEmail() {
@@ -24,10 +19,10 @@ function SendEmail() {
                 console.log('E-mail de verificação enviado com sucesso.');
             })
             .catch((error) => {
-                console.error('Erro ao enviar o e-mail de verifica��o:', error);
+                console.error('Erro ao enviar o e-mail de verificação:', error);
             });
     } else {
-        console.log('Usu�rio n�o autenticado ou e-mail j� verificado.');
+        console.log('Usuário não autenticado ou e-mail já verificado.');
     }
 
     return (

@@ -87,6 +87,7 @@ export function New() {
                     const userData = {
                         id: doc.id,
                         name: doc.data().nickName,
+                        img: doc.data().img,
                     };
 
                     list.push(userData);
@@ -132,6 +133,7 @@ export function New() {
                     id: user[0].id,
                     user: {
                         name: user[0].name,
+                        avatarUrl: user[0].img,
                     }
                 }]
 
@@ -159,14 +161,6 @@ export function New() {
                 placement: 'top',
                 bgColor: 'red.500'
               });
-
-        } finally {
-
-            toast.show({
-                title: 'Evento Criado com sucesso!',
-                placement: 'top',
-                bgColor: 'green.500'
-            });
 
         }
     }

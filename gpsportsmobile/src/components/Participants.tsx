@@ -10,10 +10,11 @@ export interface ParticipantProps {
 
 interface Props {
   participants: ParticipantProps[];
-  count: number;
+  //count: number;
 };
 
-export function Participants({participants, count }: Props) {
+export function Participants({participants/* , count */ }: Props) {
+
   return (
     <HStack>
       {
@@ -35,7 +36,7 @@ export function Participants({participants, count }: Props) {
 
       <Center w={8} h={8} bgColor="gray.700" rounded="full" borderWidth={1} borderColor="gray.800">
         <Text color="gray.100" fontSize="xs" fontFamily="medium">
-          {count ? `+${count}` : 0}
+          {/* {count ? `+${count}` : 0} */}
         </Text>
       </Center>
     </HStack>

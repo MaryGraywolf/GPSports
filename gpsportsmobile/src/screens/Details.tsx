@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from 'react';
 import { Share } from 'react-native';
-import { HStack, useToast, VStack } from 'native-base';
+import { HStack, ScrollView, useToast, VStack } from 'native-base';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import { Header } from '../components/Header';
@@ -41,9 +41,26 @@ export function Details({ route }) {
       detailsPoolsSnapshot.forEach((doc) => {
         const poolData = {
           id: doc.id,
-          title: doc.data().name,
           code: doc.data().code,
-        };
+          title: doc.data().name,
+          owner: {
+              name: doc.data().owner.name,
+              ownerId: doc.data().owner.id,
+          },
+          participants: [], // inicializa como um array vazio
+      };
+  
+      doc.data().participantes.forEach((participant) => {
+          const participantData = {
+              id: participant.id,
+              user: {
+                  name: participant.user.name,
+                  avatarUrl: participant.user.avatarUrl,
+              }
+          };
+  
+          poolData.participants.push(participantData);
+      });
         detailsPoolsList.push(poolData);
       });
 
@@ -79,39 +96,44 @@ export function Details({ route }) {
   }
 
   return (
-    <VStack flex={1} bgColor="gray.900">
-      <Header
-        title={poolDetails.title}
-        showBackButton
-        showShareButton
-        onShare={handleCodeShare}
-      />
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 100 }}
+      bgColor="gray.900">
+      <VStack flex={1} bgColor="gray.900">
+        <Header
+          title={poolDetails.title}
+          showBackButton
+          showShareButton
+          onShare={handleCodeShare}
+        />
 
 
-      <VStack px={5} flex={1}>
-        <PoolHeader data={poolDetails} />
+        <VStack px={5} flex={1}>
+          <PoolHeader data={poolDetails} />
 
-        <HStack bgColor="gray.800" p={1} rounded="sm" mb={8}>
-          <Option
-            title='Informações Gerais'
-            isSelected={optionSelected === 'infoGeral'}
-            onPress={() => setOptionSelected('infoGeral')}
-          />
-          <Option
-            title='Participantes'
-            isSelected={optionSelected === 'participantes'}
-            onPress={() => setOptionSelected('participantes')}
-          />
-        </HStack>
+          <HStack bgColor="gray.800" p={1} rounded="sm" mb={8}>
+            <Option
+              title='Informações Gerais'
+              isSelected={optionSelected === 'infoGeral'}
+              onPress={() => setOptionSelected('infoGeral')}
+            />
+            <Option
+              title='Participantes'
+              isSelected={optionSelected === 'participantes'}
+              onPress={() => setOptionSelected('participantes')}
+            />
+          </HStack>
 
 
-        {optionSelected === 'infoGeral' ? <Guesses poolId={poolDetails.code} />
-          : <EmptyMyPoolList code={poolDetails.code} />}
+          {optionSelected === 'infoGeral' ? <Guesses poolId={poolDetails.code} />
+            : <EmptyMyPoolList code={poolDetails.code} />}
+
+        </VStack>
+
+
 
       </VStack>
-
-
-
-    </VStack>
+    </ScrollView>
   );
 }

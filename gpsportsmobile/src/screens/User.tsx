@@ -14,6 +14,7 @@ import { Alert, TouchableOpacity } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import React from 'react';
 import MaterialIcons from '@expo/vector-icons/build/MaterialIcons';
+import * as ImagePicker from 'expo-image-picker';
 
 export function User({ route }) {
 
@@ -46,6 +47,7 @@ export function User({ route }) {
                     const userData = {
                         id: doc.id,
                         name: doc.data().name,
+                        img: doc.data().img
                     };
                 
                     list.push(userData);
@@ -105,8 +107,6 @@ export function User({ route }) {
         }
     }
 
-    console.log(name)
-
     return (
         <ScrollView 
         showsVerticalScrollIndicator={false}
@@ -119,7 +119,7 @@ export function User({ route }) {
                     <TouchableOpacity>
                     <Avatar 
                         size='xl'
-                        source={{uri: 'https://i.pinimg.com/564x/cb/2f/4c/cb2f4c83f7a4ae488beae68d7d8a02a0.jpg'}}
+                        source={{uri: users[0]?.img}}
                     />
                     </TouchableOpacity>
 

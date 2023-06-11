@@ -41,6 +41,7 @@ export function Pools() {
                     const userData = {
                         id: doc.id,
                         user: {
+                            avatarUrl: doc.data().img,
                             name: doc.data().nickName,
                         }
                     };
@@ -63,14 +64,26 @@ export function Pools() {
                             name: doc.data().owner.name,
                             ownerId: doc.data().owner.id,
                         },
+                        participants: [], // inicializa como um array vazio
                     };
+                
+                    doc.data().participantes.forEach((participant) => {
+                        const participantData = {
+                            id: participant.id,
+                            user: {
+                                name: participant.user.name,
+                                avatarUrl: participant.user.avatarUrl,
+                            }
+                        };
+                
+                        poolData.participants.push(participantData);
+                    });
 
                     participantList.push(poolData);
                 });
 
                 setPools(participantList);
                 setIsLoading(false);
-                //console.log(participants);
 
             };
 
@@ -103,12 +116,12 @@ export function Pools() {
                                 <PoolCard
                                     id={item.id}
                                     data={item}
-                                onPress={() => navigate('details', { id: item.code })}
+                                    onPress={() => navigate('details', { id: item.code })}
                                 />
                             }
                             ListEmptyComponent={<EmptyPoolList />}
                             showsVerticalScrollIndicator={false}
-                            contentContainerStyle={{ paddingBottom: 20 }}
+                            contentContainerStyle={{ paddingBottom: 100 }}
                         />
                 }
 

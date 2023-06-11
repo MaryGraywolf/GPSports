@@ -34,7 +34,9 @@ export function SignIn() {
 
     signInWithEmailAndPassword(auth, email, password).then(() => {
 
-      navigation.navigate('pools');
+      //navigation.navigate('pools'); 
+
+      navigation.navigate('inforegisteruser');
 
       toast.show({
         title: 'Login realizado com sucesso!',
@@ -113,7 +115,9 @@ export function SignIn() {
       <Text color="white" fontSize={14} mt={6} fontFamily="heading">
         Ainda não é membro?
       </Text>
-      <Text color="purple.500" fontSize={14} fontFamily="heading" onPress={() => navigation.navigate('regi')}>Clique aqui para realizar seu cadastro!</Text>
+      <Text color="purple.500" fontSize={14} fontFamily="heading" onPress={() => navigation.navigate('regi')}>
+        Clique aqui para realizar seu cadastro!
+      </Text>
 
     </Center>
   );

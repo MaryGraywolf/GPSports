@@ -46,10 +46,10 @@ export function PoolCard({ data, ...rest }: Props) {
             Criado por {data.owner?.name || 'Desconhecido'}
           </Text>
         </VStack>
- {/*        <Participants
-          count={data._count.participants}
+        <Participants
+          //count={data._count.participants}
           participants={data.participants}
-        /> */}
+        /> 
       </HStack>
     </TouchableOpacity>
   );
