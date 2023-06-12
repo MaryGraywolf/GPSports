@@ -1,21 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Center, Heading, Text, VStack, Select, CheckIcon, TextArea, HStack, Switch, ScrollView, FormControl, useToast } from 'native-base';
-import { Select as NativeBaseSelect } from "native-base";
+import { useState, useCallback } from 'react';
+import { Heading, Text, VStack, Select, TextArea, HStack, Switch, ScrollView, FormControl, useToast } from 'native-base';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs, updateDoc, doc, setDoc, addDoc } from 'firebase/firestore';
-
-import { useTheme } from 'native-base';
-import { Loading } from '../components/Loading';
-
+import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
 
 import { Header } from "../components/Header";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { getAuth } from 'firebase/auth';
 import { query, where } from 'firebase/firestore';
-import { Alert } from 'react-native';
 
 
 export function New() {
