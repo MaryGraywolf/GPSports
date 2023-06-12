@@ -13,14 +13,15 @@ import { Guesses } from '../components/Guesses';
 
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, query, where, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { PoolCardParticipants } from '../components/PoolCardParticipants';
+import { useFocusEffect } from '@react-navigation/native';
 
 export function Details({ route }) {
   const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
   const [isLoading, setIsLoading] = useState(false);
   const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
-  const [status, setStatus] = useState(true);
+  const [status, setStatus] = useState(0); // 0 = not registered, 1 = registered, 2 = owner
   const [user, setUsers] = useState([]);
 
   const db = getFirestore(firebaseConfig);
@@ -32,9 +33,11 @@ export function Details({ route }) {
 
   const { id: userUid } = route.params;
 
-  useEffect(() => {
-    fetchPoolDetails();
-  }, [userUid])
+  useFocusEffect(
+    useCallback(() => {
+      fetchPoolDetails();
+    }, [userUid && status])
+  );
 
   if (isLoading) {
     return (
@@ -85,12 +88,33 @@ export function Details({ route }) {
 
   async function consultUser() {
 
-    const dataUser = query(userCollectionConsult, where("id", "==", auth.currentUser.uid));
-    const querySnapshot = await getDocs(dataUser);
-    setUsers(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    try {
+      const dataUser = query(userCollectionConsult, where("id", "==", auth.currentUser.uid));
+      const querySnapshot = await getDocs(dataUser);
+      setUsers(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
+      const poolDoc = doc(db, 'pools', poolDetails.id);
+      const poolSnapshot = await getDoc(poolDoc);
+      const poolData = poolSnapshot.data();
 
+      if (poolData && poolData.participantes) {
+        const userIsRegistered = poolData.participantes.some(
+          participant => participant.id === auth.currentUser.uid
+        );
 
+        if (userIsRegistered) {
+          setStatus(1);
+
+        } else {
+          setStatus(0);
+        }
+      } else {
+        setStatus(2);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function fetchPoolDetails() {
@@ -99,18 +123,7 @@ export function Details({ route }) {
 
       await handleJoinPool();
 
-      console.log(auth.currentUser.uid);
-
-      for (let i = 0; i < poolDetails.participants.length; i++) {
-        if (poolDetails.participants[i].id === auth.currentUser.uid) {
-          setStatus(false);
-
-          break;
-
-        }
-      }
-
-      await consultUser();
+      consultUser();
 
     } catch (error) {
       console.log(error);
@@ -145,8 +158,6 @@ export function Details({ route }) {
         bgColor: 'green.500'
       })
 
-      setStatus(false);
-
     } catch (erro) {
       console.log(erro);
 
@@ -163,7 +174,6 @@ export function Details({ route }) {
       message: 'Esse aqui é o código do meu evento esportivo: ' + poolDetails.code
     })
   }
-
 
   return (
     <ScrollView
@@ -211,7 +221,7 @@ export function Details({ route }) {
               contentContainerStyle={{ paddingBottom: 20 }}
             />}
 
-          {status === true ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool} /> : <></>}
+          {status == 0 ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool} /> : <></>}
 
         </VStack>
 

@@ -22,7 +22,6 @@ export function Guesses({ poolId }: Props) {
 
   const db = getFirestore(firebaseConfig);
   const poolsCollection = collection(db, 'pools');
-  const [participantes, setParticipantes] = useState([]);
   const [dadosPool, setDadosPool] = useState([]);
 
   const fetchInformacoes = async () => {
@@ -51,12 +50,13 @@ export function Guesses({ poolId }: Props) {
 
     } finally {
       setIsLoading(false);
-      console.log(dadosPool);
     }
   }
 
   useEffect(() => {
-    fetchInformacoes();
+    if(poolId !== undefined){
+      fetchInformacoes();
+    }
   }, [poolId])
 
   if (isLoading) {
