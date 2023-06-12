@@ -78,7 +78,7 @@ export function Guesses({ poolId }: Props) {
     >
       {dadosPool.map((user) => {
         return (
-          <VStack>
+          <VStack key={user.id}>
             <VStack mt={4} mx={4} alignItems="center">
               <Heading color="white" fontSize="md" fontFamily="heading"> Esporte do Evento </Heading>
               <Text color="gray.300" fontSize="sm" fontFamily="heading"> {user.esporte} </Text>

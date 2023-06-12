@@ -211,7 +211,7 @@ export function New() {
                                 h={14}
                                 bg={'gray.800'}
                                 color={'gray.300'}
-                                //borderColor={'gray.600'}
+                                borderColor={'gray.600'}
                                 fontSize={'md'}>
 
                                 <Select.Item label="Futebol" value="Futebol" />

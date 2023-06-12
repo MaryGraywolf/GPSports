@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from 'react';
 import { Share } from 'react-native';
-import { HStack, ScrollView, useToast, VStack } from 'native-base';
+import { FlatList, HStack, ScrollView, useToast, VStack } from 'native-base';
 
 import { Header } from '../components/Header';
 import { Loading } from '../components/Loading';
@@ -14,12 +14,13 @@ import { Guesses } from '../components/Guesses';
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, getDocs, query, where, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { PoolCardParticipants } from '../components/PoolCardParticipants';
 
 export function Details({ route }) {
   const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
   const [isLoading, setIsLoading] = useState(false);
   const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
-  const [status, setStatus] = useState(false);
+  const [status, setStatus] = useState(true);
   const [user, setUsers] = useState([]);
 
   const db = getFirestore(firebaseConfig);
@@ -88,7 +89,7 @@ export function Details({ route }) {
     const querySnapshot = await getDocs(dataUser);
     setUsers(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-    
+
 
   }
 
@@ -105,10 +106,6 @@ export function Details({ route }) {
           setStatus(false);
 
           break;
-
-        }else{
-
-          setStatus(true);
 
         }
       }
@@ -200,9 +197,21 @@ export function Details({ route }) {
 
 
           {optionSelected === 'infoGeral' ? <Guesses poolId={poolDetails.code} />
-            : <EmptyMyPoolList code={poolDetails.code} />}
+            : <FlatList
+              data={poolDetails.participants}
+              keyExtractor={data => data.id}
+              renderItem={({ item }) =>
+                <PoolCardParticipants
+                  id={item.id}
+                  data={item}
+                />
+              }
+              ListEmptyComponent={<EmptyMyPoolList code={poolDetails.code} />}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            />}
 
-          {status === true ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool}/> : <></>}
+          {status === true ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool} /> : <></>}
 
         </VStack>
 
