@@ -65,13 +65,13 @@ export function User({ route }) {
         try {
 
             if(email != ''){
-                const updateEmail = await updateDoc(userDocCollection, {
+                await updateDoc(userDocCollection, {
                     email: email
                 });
             }
 
             if(name != ''){
-                const updateName = await updateDoc(userDocCollection, {
+                await updateDoc(userDocCollection, {
                     name: name
                 });
             }
@@ -100,8 +100,14 @@ export function User({ route }) {
                     <TouchableOpacity>
                     <Avatar 
                         size='xl'
-                        source={{uri: 'https://i.pinimg.com/564x/cb/2f/4c/cb2f4c83f7a4ae488beae68d7d8a02a0.jpg'}}
-                    />
+                    >
+                        {users.map((user) => {
+                            return (
+                            <Text fontSize="30px" color="purple.500" fontFamily="heading">{user.name?.at(0).toUpperCase()}
+                            </Text>
+                            );
+                        })}   
+                    </Avatar>
                     </TouchableOpacity>
 
                     <Center flexDirection='row'>
