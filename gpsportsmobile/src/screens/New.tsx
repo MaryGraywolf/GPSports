@@ -1,6 +1,9 @@
 import { useState, useCallback } from 'react';
 import { Heading, Text, VStack, Select, TextArea, HStack, Switch, ScrollView, FormControl, useToast } from 'native-base';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { TouchableOpacity, Platform, View } from 'react-native';
+import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 import { firebaseConfig } from '../../firebase-config';
 import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
@@ -18,6 +21,7 @@ export function New() {
     const toast = useToast();
 
     const [isLoading, setIsLoading] = useState(false);
+    const [showPicker, setShowPicker] = useState(false);
 
     // Conexões com o Banco
 
@@ -44,11 +48,19 @@ export function New() {
     const [num, setNum] = useState('');
     const [rua, setRua] = useState('');
     const [ref, setRef] = useState('');
+    const [date, setDate] = useState(new Date());
 
     const validateFields = () => {
-        if (!name || !esporte || qtdPessoa <= 0 || particular == true && valor <= 0 || cep <= 0 || !estado || !cidade || !bairro || !rua) {
+        if (!name || !esporte || qtdPessoa <= 0 || particular == true && valor <= 0 
+            || cep <= 0 || !estado || !cidade || !bairro || !rua
+            || !num || !ref || !date) {
             // Verifique se todos os campos obrigatórios estão preenchidos
-            alert('Preencha todos os campos obrigatórios.');
+            toast.show({
+                title: 'Preencha todos os campos!',
+                placement: 'top',
+                bgColor: 'red.500'
+            });
+
             return false;
         }
 
@@ -128,6 +140,7 @@ export function New() {
                 numero: num,
                 rua: rua,
                 ref: ref,
+                date: date,
                 participantes: [{
                     id: user[0].id,
                     user: {
@@ -135,6 +148,12 @@ export function New() {
                     }
                 }]
 
+            });
+
+            toast.show({
+                title: 'Evento Criado com sucesso!',
+                placement: 'top',
+                bgColor: 'green.500'
             });
 
             navigate('pools');
@@ -145,7 +164,7 @@ export function New() {
                 title: 'Não foi possível criar o evento!',
                 placement: 'top',
                 bgColor: 'red.500'
-              });
+            });
 
         } finally {
 
@@ -161,18 +180,37 @@ export function New() {
             setNum('')
             setRua('')
             setRef('')
+            setDate(new Date())
             setQtdPessoa(null)
             setValor(null)
             setCep(null)
 
-            toast.show({
-                title: 'Evento Criado com sucesso!',
-                placement: 'top',
-                bgColor: 'green.500'
-            });
-
         }
     }
+
+    const toggleDate = () => {
+        setShowPicker(!showPicker);
+    };
+
+    const onChange = (event, selectedDateTime) => {
+        const currentDate = selectedDateTime || date;
+        setShowPicker(Platform.OS === 'android');
+        setDate(currentDate);
+    };
+
+    const toggleDateTimePicker = () => {
+        setShowPicker(!showPicker);
+    };
+
+    const handleDateTimeConfirm = (selectedDateTime) => {
+        setDate(selectedDateTime);
+        toggleDateTimePicker();
+    };
+
+    const formatDate = (date) => {
+        const options = { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+        return date.toLocaleDateString('pt-BR', options);
+    };
 
     return (
         <ScrollView
@@ -227,14 +265,26 @@ export function New() {
 
                     </HStack>
 
-                    <HStack alignItems="center" justifyContent="space-between" mb={2} mx={5}>
+                    <DateTimePickerModal
+                        isVisible={showPicker}
+                        mode="datetime"
+                        onCancel={toggleDateTimePicker}
+                        onConfirm={handleDateTimeConfirm}
+                    />
 
+                    <TouchableOpacity onPress={toggleDateTimePicker} >
+                        <Input
+                            mb={4}
+                            placeholder='Data do evento'
+                            value={formatDate(date)}
+                            editable={false}
+                        />
+                    </TouchableOpacity>
 
-
-                    </HStack>
                     <Text fontFamily="heading" color="gray.300" fontSize="16" textAlign="left" mr={'60%'}>
                         Local Particular?
                     </Text>
+
                     <HStack alignItems="center" justifyContent={'space-between'} w='80%'>
 
                         <VStack w={'30%'} mr={8}>

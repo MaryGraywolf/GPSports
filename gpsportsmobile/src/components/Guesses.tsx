@@ -24,6 +24,11 @@ export function Guesses({ poolId }: Props) {
   const poolsCollection = collection(db, 'pools');
   const [dadosPool, setDadosPool] = useState([]);
 
+  const data = dadosPool[0]?.date?.toDate();
+  const opcoes = { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const dataFormatada = data ? data.toLocaleDateString('pt-BR', opcoes) : 'Data não informada';
+  console.log(dataFormatada);
+
   const fetchInformacoes = async () => {
     try {
       setIsLoading(true);
@@ -54,7 +59,7 @@ export function Guesses({ poolId }: Props) {
   }
 
   useEffect(() => {
-    if(poolId !== undefined){
+    if (poolId !== undefined) {
       fetchInformacoes();
     }
   }, [poolId])
@@ -79,20 +84,34 @@ export function Guesses({ poolId }: Props) {
       {dadosPool.map((user) => {
         return (
           <VStack key={user.id}>
+
             <VStack mt={4} mx={4} alignItems="center">
               <Heading color="white" fontSize="md" fontFamily="heading"> Esporte do Evento </Heading>
               <Text color="gray.300" fontSize="sm" fontFamily="heading"> {user.esporte} </Text>
             </VStack>
+            <VStack mt={4} mx={4} alignItems="center">
+              <Heading color="white" fontSize="md" fontFamily="heading"> Data e hora </Heading>
+              <Text color="gray.300" fontSize="sm" fontFamily="heading"> {dataFormatada} </Text>
 
-            <VStack mt={4} alignItems="center">
-              <Heading color="white" fontSize="md" fontFamily="heading"> Local Particular? </Heading>
-
-              {user.particular == true ? (
-                <Text color="gray.300" fontSize="sm" fontFamily="heading"> Sim </Text>
-              ) : (
-                <Text color="gray.300" fontSize="sm" fontFamily="heading"> Não </Text>
-              )}
             </VStack>
+
+            {user.particular == true ? (
+              <HStack alignItems="center" justifyContent={'space-between'} mt={4}>
+                <VStack mt={4} alignItems="center" mx={2}>
+                  <Heading color="white" fontSize="md" fontFamily="heading"> Local Particular? </Heading>
+                  <Text color="gray.300" fontSize="sm" fontFamily="heading"> Sim </Text>
+                </VStack>
+                <VStack mt={4} alignItems="center" mx={2}>
+                  <Heading color="white" fontSize="md" fontFamily="heading"> Valor p/Pessoa </Heading>
+                  <Text color="gray.300" fontSize="sm" fontFamily="heading"> {user.valor} </Text>
+                </VStack>
+              </HStack>
+            ) : (
+              <VStack mt={4} alignItems="center">
+                <Heading color="white" fontSize="md" fontFamily="heading"> Local Particular? </Heading>
+                <Text color="gray.300" fontSize="sm" fontFamily="heading"> Não </Text>
+              </VStack>
+            )}
 
             <HStack alignItems="center" justifyContent={'space-between'} mt={4}>
               <VStack alignItems="center" mx={2}>
@@ -104,7 +123,7 @@ export function Guesses({ poolId }: Props) {
                 <Heading color="white" fontSize="md" fontFamily="heading"> Estado </Heading>
                 <Text color="gray.300" fontSize="sm" fontFamily="heading"> {user.estado} </Text>
               </VStack>
- 
+
               <VStack alignItems="center" mx={2}>
                 <Heading color="white" fontSize="md" fontFamily="heading"> Cidade </Heading>
                 <Text color="gray.300" fontSize="sm" fontFamily="heading"> {user.cidade} </Text>
