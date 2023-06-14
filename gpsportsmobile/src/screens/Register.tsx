@@ -94,8 +94,8 @@ function RegisteConext() {
   return (
     <Center flex={1} bgColor="gray.900" p={7}>
 
-      <Text color="purple.500" fontSize={45} mt={10} fontFamily="heading">
-        GPSports
+      <Text color="purple.500" fontSize={45} fontFamily="heading">
+        GPS<Text color="white" fontSize={45} fontFamily="heading">ports</Text>
       </Text>
       {/* <Header title="Buscar evento esportivo" showBackButton/> */}
 

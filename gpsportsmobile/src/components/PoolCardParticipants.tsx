@@ -21,7 +21,6 @@ export function PoolCardParticipants({ data, ...rest }: Props) {
         bgColor="gray.800"
         borderBottomWidth={3}
         borderBottomColor="purple.500"
-        alignItems="left"
         rounded="sm"
         mb={3}
         p={4}

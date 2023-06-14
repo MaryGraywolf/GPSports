@@ -71,8 +71,8 @@ export function InfoRegisterUser() {
             bgColor="gray.900">
             <Center flex={1} bgColor="gray.900" p={7}>
 
-                <Text color="purple.500" fontSize={26} mt={10} fontFamily="heading">
-                    Dados Adicionais
+                <Text color="purple.500" fontSize={45} mt={'30%'} fontFamily="heading">
+                    GPS<Text color="white" fontSize={45} fontFamily="heading">ports</Text>
                 </Text>
 
                 {user.map((user) => {

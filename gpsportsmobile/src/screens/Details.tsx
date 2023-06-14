@@ -19,9 +19,9 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export function Details({ route }) {
   const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
-  const [status, setStatus] = useState(0); // 0 = not registered, 1 = registered, 2 = owner
+  const [status, setStatus] = useState(2); // 0 = not registered, 1 = registered, 2 = owner
   const [user, setUsers] = useState([]);
 
   const db = getFirestore(firebaseConfig);
@@ -36,10 +36,15 @@ export function Details({ route }) {
   useFocusEffect(
     useCallback(() => {
       fetchPoolDetails();
-    }, [userUid && status])
+    }, [userUid])
   );
 
-  if (isLoading) {
+  useEffect(() => {
+    consultUser();
+  }, [poolDetails]);
+  
+
+  if (isLoading == true && status == 2) {
     return (
       <Loading />
     )
@@ -114,16 +119,15 @@ export function Details({ route }) {
 
     } catch (error) {
       console.log(error);
+    } finally{
+      setIsLoading(false);
     }
   }
 
   async function fetchPoolDetails() {
     try {
-      setIsLoading(true);
 
       await handleJoinPool();
-
-      consultUser();
 
     } catch (error) {
       console.log(error);
@@ -133,8 +137,6 @@ export function Details({ route }) {
         bgColor: 'red.500'
       })
 
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -151,6 +153,8 @@ export function Details({ route }) {
           }
         })
       });
+
+      setStatus(1);
 
       toast.show({
         title: 'Inscrição realizada com sucesso',

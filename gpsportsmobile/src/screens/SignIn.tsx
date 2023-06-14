@@ -38,7 +38,7 @@ export function SignIn() {
       if (auth.currentUser.emailVerified == false) {
 
         navigation.navigate('email');
-        
+
       } else {
 
         navigation.navigate('pools');
@@ -74,7 +74,7 @@ export function SignIn() {
     <Center flex={1} bgColor="gray.900" p={7}>
 
       <Text color="purple.500" fontSize={45} fontFamily="heading">
-        GPSports
+        GPS<Text color="white" fontSize={45} fontFamily="heading">ports</Text>
       </Text>
 
       <VStack mt={8} mx={5} mb={2} alignItems="center">
