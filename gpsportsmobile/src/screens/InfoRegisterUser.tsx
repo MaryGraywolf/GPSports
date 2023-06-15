@@ -129,7 +129,7 @@ export function InfoRegisterUser() {
                                 <Text color={'gray.300'} fontSize={14} fontFamily="heading">Surf</Text>
                             </Checkbox>
 
-                            <Checkbox value="Boxe" colorScheme="purple" bg={'gray.800'} borderColor="gray.600" mx={4}>
+                            <Checkbox value="Boxe" colorScheme={'purple.500'} bg={'gray.800'} borderColor="gray.600" mx={4}>
                                 <Text color={'gray.300'} fontSize={14} fontFamily="heading">Boxe</Text>
                             </Checkbox>
                         </Stack>

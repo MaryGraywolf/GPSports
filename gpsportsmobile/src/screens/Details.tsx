@@ -13,9 +13,9 @@ import { Guesses } from '../components/Guesses';
 
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, query, where, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, doc, updateDoc, arrayUnion, getDoc, deleteDoc } from 'firebase/firestore';
 import { PoolCardParticipants } from '../components/PoolCardParticipants';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 export function Details({ route }) {
   const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
@@ -33,6 +33,8 @@ export function Details({ route }) {
 
   const { id: userUid } = route.params;
 
+  const { navigate } = useNavigation();
+
   useFocusEffect(
     useCallback(() => {
       fetchPoolDetails();
@@ -42,7 +44,7 @@ export function Details({ route }) {
   useEffect(() => {
     consultUser();
   }, [poolDetails]);
-  
+
 
   if (isLoading == true && status == 2) {
     return (
@@ -102,24 +104,25 @@ export function Details({ route }) {
       const poolSnapshot = await getDoc(poolDoc);
       const poolData = poolSnapshot.data();
 
-      if (poolData && poolData.participantes) {
+      if (poolData && poolData.participantes && poolData.owner) {
         const userIsRegistered = poolData.participantes.some(
           participant => participant.id === auth.currentUser.uid
         );
 
-        if (userIsRegistered) {
-          setStatus(1);
+        const userIsMaster = poolData.owner.id === auth.currentUser.uid;
 
+        if (userIsMaster) {
+          setStatus(2);
+        } else if (userIsRegistered) {
+          setStatus(1);
         } else {
           setStatus(0);
         }
-      } else {
-        setStatus(2);
       }
 
     } catch (error) {
       console.log(error);
-    } finally{
+    } finally {
       setIsLoading(false);
     }
   }
@@ -179,6 +182,27 @@ export function Details({ route }) {
     })
   }
 
+  async function deleteEvent(){
+    try {
+      const poolDoc = doc(db, 'pools', poolDetails.id);
+      await deleteDoc(poolDoc);
+      toast.show({
+        title: 'Evento deletado com sucesso',
+        placement: 'top',
+        bgColor: 'green.500'
+      })
+
+      navigate('pools');
+
+    } catch (error) {
+      toast.show({
+        title: 'Não foi possível deletar o evento',
+        placement: 'top',
+        bgColor: 'red.500'
+      })
+    }
+  }
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -226,6 +250,12 @@ export function Details({ route }) {
             />}
 
           {status == 0 ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool} /> : <></>}
+
+          {status == 2 ?  <VStack>
+                            <Button title="EDITAR EVENTO" mb={4} onPress={() => navigate('editevent', { id: userUid })}/>
+                            <Button title="EXCLUIR EVENTO" type="SECUNDARY" onPress={deleteEvent}/>
+                          </VStack>
+                        : <></>}
 
         </VStack>
 

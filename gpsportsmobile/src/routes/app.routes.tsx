@@ -13,6 +13,7 @@ import { Register } from '../screens/Register';
 import { InfoRegisterUser } from '../screens/InfoRegisterUser';
 import { EmailVerification } from '../screens/EmailVerification';
 import { Details } from '../screens/Details';
+import { EditEvent } from '../screens/EditEvent';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -80,7 +81,7 @@ export function AppRoutes() {
           tabBarStyle: { display: 'none' }
         }}
       />
-      
+
       <Screen
         name="pools"
         component={Pools}
@@ -122,6 +123,12 @@ export function AppRoutes() {
         options={{ tabBarButton: () => null }}
       />
 
+      <Screen
+        name="editevent"
+        component={EditEvent}
+        initialParams={{ id: '' }}
+        options={{ tabBarButton: () => null }}
+      />
 
     </Navigator>
   );

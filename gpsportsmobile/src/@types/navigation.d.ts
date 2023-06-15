@@ -13,6 +13,9 @@ export declare global {
                 id: string;
             };
             email: undefined;
+            editevent: {
+                id: string;
+            }
         }
 
     }
