@@ -1,34 +1,36 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Avatar, Center, HStack, Heading, Icon, Row, ScrollView, Text, TextArea, VStack } from 'native-base';
-import { Select as NativeBaseSelect } from "native-base";
+// Import da biblioteca do React e de seus tipos
+import React from 'react';
+import { useState, useCallback } from 'react';
+import { Alert, TouchableOpacity } from 'react-native';
+import { Avatar, Center, Icon, ScrollView, Text, TextArea, VStack } from 'native-base';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
+// Imports do Firebase
+import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs, addDoc, query, where, updateDoc, doc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore/lite';
 
+// Imports de componentes e Icons
 import { Header } from "../components/Header";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import { PencilSimpleLine, SignOut } from 'phosphor-react-native';
-import { Alert, TouchableOpacity } from 'react-native';
-import { getAuth } from 'firebase/auth';
-import React from 'react';
 import MaterialIcons from '@expo/vector-icons/build/MaterialIcons';
 
-export function User({ route }) {
+export function User() {
 
     const { navigate } = useNavigation();
 
+    // Ligações com o Firebase
+    const auth = getAuth(firebaseConfig); // autenticação
+    const db = getFirestore(firebaseConfig); // banco de dados
+    const userCollection = collection(db, 'users'); // documento users para retornar dados
+    const userDocCollection = doc(db, 'users', auth.currentUser.uid); // documento users para receber dados
+
+    // Const para pegar os dados do usuário
+    const [users, setUsers] = useState([]);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [users, setUsers] = useState([]);
     const [bio, setBio] = useState('');
-
-    const auth = getAuth(firebaseConfig);
-    const db = getFirestore(firebaseConfig);
-    const userCollection = collection(db, 'users');
-    const userDocCollection = doc(db, 'users', auth.currentUser.uid);
-    const poolsCollection = collection(db, 'pools');
 
     useFocusEffect(
         useCallback(() => {
@@ -74,6 +76,12 @@ export function User({ route }) {
             if (name != '') {
                 await updateDoc(userDocCollection, {
                     name: name
+                });
+            }
+
+            if (bio != '') {
+                await updateDoc(userDocCollection, {
+                    bio: bio
                 });
             }
 

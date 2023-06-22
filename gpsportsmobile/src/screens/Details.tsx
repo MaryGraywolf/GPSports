@@ -1,39 +1,46 @@
-import { useCallback, useState, useEffect } from 'react';
+// Import das bibliotecas do React
 import { Share } from 'react-native';
+import { useCallback, useState, useEffect } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FlatList, HStack, ScrollView, useToast, VStack } from 'native-base';
 
+// Import dos icones e componentes
 import { Header } from '../components/Header';
-import { Loading } from '../components/Loading';
 import { Button } from '../components/Button';
+import { Option } from '../components/Option';
+import { Loading } from '../components/Loading';
+import { Guesses } from '../components/Guesses';
 import { PoolCardPros } from '../components/PoolCard';
 import { PoolHeader } from '../components/PoolHeader';
 import { EmptyMyPoolList } from '../components/EmptyMyPoolList';
-import { Option } from '../components/Option';
-import { Guesses } from '../components/Guesses';
-
-import { firebaseConfig } from '../../firebase-config';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, query, where, doc, updateDoc, arrayUnion, getDoc, deleteDoc } from 'firebase/firestore';
 import { PoolCardParticipants } from '../components/PoolCardParticipants';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+
+// Import das configurações do firebase
+import { getAuth } from 'firebase/auth';
+import { firebaseConfig } from '../../firebase-config';
+import { getFirestore, collection, getDocs, query, where, doc, updateDoc, arrayUnion, getDoc, deleteDoc } from 'firebase/firestore';
 
 export function Details({ route }) {
-  const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
-  const [isLoading, setIsLoading] = useState(true);
-  const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
-  const [status, setStatus] = useState(2); // 0 = not registered, 1 = registered, 2 = owner
-  const [user, setUsers] = useState([]);
 
+  // Const de navegação
+  const { id: userUid } = route.params;
+  const { navigate } = useNavigation();
+
+  // Const de estado
+  const toast = useToast();
+  const [status, setStatus] = useState(2); // 0 = not registered, 1 = registered, 2 = owner
+  const [isLoading, setIsLoading] = useState(true);
+  const [optionSelected, setOptionSelected] = useState<'infoGeral' | 'participantes'>('infoGeral')
+
+  // Conexão com o banco
   const db = getFirestore(firebaseConfig);
   const auth = getAuth(firebaseConfig);
   const poolsCollection = collection(db, 'pools');
   const userCollectionConsult = collection(db, 'users');
 
-  const toast = useToast();
-
-  const { id: userUid } = route.params;
-
-  const { navigate } = useNavigation();
+  // Armazenamento dos dados do banco
+  const [poolDetails, setPoolDetails] = useState<PoolCardPros>({} as PoolCardPros);
+  const [user, setUsers] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
@@ -52,6 +59,24 @@ export function Details({ route }) {
     )
   }
 
+  // Função para chamar o carregamento dos dados do evento
+  async function fetchPoolDetails() {
+    try {
+
+      await handleJoinPool();
+
+    } catch (error) {
+      console.log(error);
+      toast.show({
+        title: 'Não foi possível carregar os dados do evento',
+        placement: 'top',
+        bgColor: 'red.500'
+      })
+
+    }
+  }
+
+  // Função para puxar os dados do evento
   async function handleJoinPool() {
 
     const detailsPoolsQuery = query(poolsCollection, where('code', '==', userUid));
@@ -93,6 +118,7 @@ export function Details({ route }) {
     setPoolDetails(detailsPoolsList[0]);
   }
 
+  // Função para descobrir se o usuário é dono, participante ou não está inscrito no evento
   async function consultUser() {
 
     try {
@@ -127,22 +153,7 @@ export function Details({ route }) {
     }
   }
 
-  async function fetchPoolDetails() {
-    try {
-
-      await handleJoinPool();
-
-    } catch (error) {
-      console.log(error);
-      toast.show({
-        title: 'Não foi possível carregar os dados do evento',
-        placement: 'top',
-        bgColor: 'red.500'
-      })
-
-    }
-  }
-
+  // Função para se cadastrar no evento
   async function registerPool() {
     try {
 
@@ -176,13 +187,8 @@ export function Details({ route }) {
     }
   }
 
-  async function handleCodeShare() {
-    await Share.share({
-      message: 'Esse aqui é o código do meu evento esportivo: ' + poolDetails.code
-    })
-  }
-
-  async function deleteEvent(){
+  // Função para deletar o evento
+  async function deleteEvent() {
     try {
       const poolDoc = doc(db, 'pools', poolDetails.id);
       await deleteDoc(poolDoc);
@@ -201,6 +207,13 @@ export function Details({ route }) {
         bgColor: 'red.500'
       })
     }
+  }
+
+  // Função para compartilhar código com outras pessoas
+  async function handleCodeShare() {
+    await Share.share({
+      message: 'Esse aqui é o código do meu evento esportivo: ' + poolDetails.code
+    })
   }
 
   return (
@@ -251,14 +264,14 @@ export function Details({ route }) {
 
           {status == 0 ? <Button title="PARTICIPAR DO EVENTO" onPress={registerPool} /> : <></>}
 
-          {status == 2 ?  <VStack>
-                            <Button title="EDITAR EVENTO" mb={4} onPress={() => navigate('editevent', { id: userUid })}/>
-                            <Button title="EXCLUIR EVENTO" type="SECUNDARY" onPress={deleteEvent}/>
-                          </VStack>
-                        : <></>}
+          {status == 2 ?
+            <VStack>
+              <Button title="EDITAR EVENTO" mb={4} onPress={() => navigate('editevent', { id: userUid })} />
+              <Button title="EXCLUIR EVENTO" type="SECUNDARY" onPress={deleteEvent} />
+            </VStack>
+            : <></>}
 
         </VStack>
-
       </VStack>
     </ScrollView>
   );

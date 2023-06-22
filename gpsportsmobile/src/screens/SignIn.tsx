@@ -1,34 +1,38 @@
-import { Center, Text, Icon, Pressable, Heading, VStack, useToast } from 'native-base';
+// Import das bibliotecas do React
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Fontisto, MaterialIcons, Octicons } from '@expo/vector-icons';
+import { Center, Text, Icon, Pressable, Heading, VStack, useToast } from 'native-base';
+
+// Import dos icones e componentes
 import { Button } from '../components/Button';
 import { Input } from "../components/Input";
 import { useAuth } from '../hooks/useAuth';
+import { Fontisto, MaterialIcons} from '@expo/vector-icons';
 
-import React from 'react';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
+// Import da configuração do firebase
 import { firebaseConfig } from '../../firebase-config';
-import { Alert } from 'react-native';
-import { EmailVerification } from './EmailVerification';
-
+import { getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 
 export function SignIn() {
 
-  const navigation = useNavigation();
-
-  const { signIn, user } = useAuth();
-
-  const [show, setShow] = React.useState(false);
+  // Variaveis de controle
   const toast = useToast();
-
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const navigation = useNavigation();
+  const [show, setShow] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [id, setId] = React.useState('');
 
+  // Variavel de autenticação
   const auth = getAuth(firebaseConfig);
 
+  // Variavel de login do Google
+  const { signIn, user } = useAuth();
+
+  // Variaveis de dados do usuario
+  const [id, setId] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  // Função de Login com email e senha do Firebase
   const handleSignIn = () => {
 
     setIsLoading(true);

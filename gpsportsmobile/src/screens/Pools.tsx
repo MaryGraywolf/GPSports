@@ -1,31 +1,35 @@
-import { useCallback, useState, useEffect } from 'react';
-import { VStack, Icon, useToast, FlatList, Text } from 'native-base';
-import { Octicons } from '@expo/vector-icons';
+// Import das bibliotecas do React
+import { useCallback, useState} from 'react';
+import { VStack, Icon, FlatList} from 'native-base';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
+// Import dos icones e dos componentes
+import { Octicons } from '@expo/vector-icons';
 import { Button } from '../components/Button';
 import { Header } from '../components/Header';
-import { PoolCard, PoolCardPros } from '../components/PoolCard';
+import { PoolCard } from '../components/PoolCard';
 import { Loading } from '../components/Loading';
 import { EmptyPoolList } from '../components/EmptyPoolList';
 
-import { firebaseConfig } from '../../firebase-config';
+// Import das configurações do firebase
 import { getAuth } from 'firebase/auth';
+import { firebaseConfig } from '../../firebase-config';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
-
-
 
 export function Pools() {
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [pools, setPools] = useState([]);
-
+    // Variaveis de controle
     const { navigate } = useNavigation();
+    const [isLoading, setIsLoading] = useState(true);
 
+    // Conexões com o banco
     const auth = getAuth(firebaseConfig);
     const db = getFirestore(firebaseConfig);
     const poolsCollection = collection(db, 'pools');
     const userCollection = collection(db, 'users');
+
+    // Variavel de armazenamento dos dados do banco
+    const [pools, setPools] = useState([]);
 
     useFocusEffect(
         useCallback(() => {

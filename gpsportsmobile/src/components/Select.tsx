@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Select as NativeBaseSelect, ISelectProps} from 'native-base';
 
 export function Select({ ...rest }: ISelectProps) {

@@ -1,9 +1,11 @@
+// Import das bibliotecas do React
+import * as React from "react";
 import { Text, HStack, Box } from 'native-base';
-import { CaretLeft, Export } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native';
 
+// Import dos icones e componentes
 import { ButtonIcon } from './ButtonIcon';
-
+import { CaretLeft, Export } from 'phosphor-react-native';
 
 interface Props {
   title: string;

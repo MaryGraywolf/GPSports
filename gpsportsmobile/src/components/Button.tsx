@@ -1,4 +1,5 @@
-import { Button as ButtonNativeBase, Text, IButtonProps } from 'native-base'
+import * as React from "react";
+import { Button as ButtonNativeBase, Text, IButtonProps } from 'native-base';
 
 export interface Props extends IButtonProps{
     title: string;

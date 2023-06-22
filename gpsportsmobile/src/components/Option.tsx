@@ -1,3 +1,5 @@
+// Import das bibliotecas do React
+import * as React from "react";
 import { Center, Text, Pressable, IPressableProps } from 'native-base';
 
 interface Props extends IPressableProps {

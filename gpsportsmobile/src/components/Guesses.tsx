@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Box, Heading, VStack, useToast, Text, View, HStack } from 'native-base';
-import { useFocusEffect } from '@react-navigation/native';
+// Import das bibliotecas do React
+import { useEffect, useState } from 'react';
+import { Heading, VStack, useToast, Text, HStack } from 'native-base';
 
+// Import dos icones e componentes
 import { Loading } from '../components/Loading';
 
+// Import das configurações do firebase
 import { firebaseConfig } from '../../firebase-config';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
-
 
 interface Props {
   poolId: string;
@@ -14,20 +15,34 @@ interface Props {
 
 export function Guesses({ poolId }: Props) {
 
-  const [isLoading, setIsLoading] = useState(false);
-
+  // Variaveis de controle
   const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Informações do Firebase
 
+  // Conexão com o banco de dados
   const db = getFirestore(firebaseConfig);
   const poolsCollection = collection(db, 'pools');
   const [dadosPool, setDadosPool] = useState([]);
 
+  // Formatação da data
   const data = dadosPool[0]?.date?.toDate();
   const opcoes = { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
   const dataFormatada = data ? data.toLocaleDateString('pt-BR', opcoes) : 'Data não informada';
   console.log(dataFormatada);
+
+  useEffect(() => {
+    if (poolId !== undefined) {
+      fetchInformacoes();
+    }
+  }, [poolId])
+
+  if (isLoading) {
+    return (
+      <Loading />
+    )
+  }
 
   const fetchInformacoes = async () => {
     try {
@@ -56,18 +71,6 @@ export function Guesses({ poolId }: Props) {
     } finally {
       setIsLoading(false);
     }
-  }
-
-  useEffect(() => {
-    if (poolId !== undefined) {
-      fetchInformacoes();
-    }
-  }, [poolId])
-
-  if (isLoading) {
-    return (
-      <Loading />
-    )
   }
 
   return (

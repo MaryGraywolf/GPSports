@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Spinner, Center, NativeBaseProvider, Text} from 'native-base';
+import { Spinner, Center } from 'native-base';
 
 export function Loading() {
     return (

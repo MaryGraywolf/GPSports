@@ -1,5 +1,8 @@
+// Import das bibliotecas do React
+import * as React from "react";
 import { Heading, HStack, Text, VStack } from 'native-base';
 
+// Import dos componentes
 import { PoolPros } from './PoolCard';
 import { Participants } from './Participants';
 

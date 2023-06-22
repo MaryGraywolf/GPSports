@@ -1,69 +1,83 @@
+// Import da biblioteca do React e de seus tipos
 import { useState, useCallback } from 'react';
-import { Heading, Text, VStack, Select, TextArea, HStack, Switch, ScrollView, FormControl, useToast } from 'native-base';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { TouchableOpacity, Platform, View } from 'react-native';
+import { TouchableOpacity} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Heading, Text, VStack, Select, TextArea, HStack, Switch, ScrollView, FormControl, useToast } from 'native-base';
 
-import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore';
-
+// Imports dos componentes
 import { Header } from "../components/Header";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import { getAuth } from 'firebase/auth';
-import { query, where } from 'firebase/firestore';
 
+// Imports do Firebase e suas funções
+import { getAuth } from 'firebase/auth';
+import { firebaseConfig } from '../../firebase-config';
+import { getFirestore, collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
 
 export function EditEvent({ route }) {
 
-    const { navigate } = useNavigation();
+    // Const de parametros e navegação
     const { id: idEvent } = route.params;
-    const toast = useToast();
+    const { navigate } = useNavigation();
 
+    // const de estado e alert
+    const toast = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [showPicker, setShowPicker] = useState(false);
 
+    // Valores da tabela Pools
+    const [poolResult, setPoolResult] = useState([]);
+
+    // Conexões com o Banco
+    const auth = getAuth(firebaseConfig);
+    const db = getFirestore(firebaseConfig);
+    const poolsCollection = collection(db, 'pools');
+
+    // Valores da tabela Pools
+    const [esporte, setEsporte] = useState('');
+    const [name, setName] = useState('');
+    const [estado, setEstado] = useState('');
+    const [cidade, setCidade] = useState('');
+    const [bairro, setBairro] = useState('');
+    const [obs, setObs] = useState('');
+    const [num, setNum] = useState('');
+    const [rua, setRua] = useState('');
+    const [ref, setRef] = useState('');
+    const [qtdPessoa, setQtdPessoa] = useState(0);
+    const [valor, setValor] = useState(0);
+    const [cep, setCep] = useState(0);
+    const [particular, setParticular] = useState(false);
+    const [date, setDate] = useState(new Date());
+
+    // Função para atualizar os dados sempre que a tela for focada
     useFocusEffect(
         useCallback(() => {
             handleJoinPool();
         }, [idEvent])
     );
 
-    // Valores da tabela Pools
+    // Funções relacionadas a data e hora
+    const toggleDateTimePicker = () => {
+        setShowPicker(!showPicker); // Mostra e desaparece a tela de data e hora
+    };
 
-    const [poolResult, setPoolResult] = useState([]);
+    const handleDateTimeConfirm = (selectedDateTime) => {
+        setDate(selectedDateTime); // Seta o valor no campo de data e hora
+        toggleDateTimePicker();
+    };
 
-    console.log(poolResult);
+    const formatDate = (date) => {
+        const options = { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };  // Formata a data
+        return date.toLocaleDateString('pt-BR', options);
+    };
 
-    // Conexões com o Banco
-
-    const auth = getAuth(firebaseConfig);
-    const db = getFirestore(firebaseConfig);
-    const poolsCollection = collection(db, 'pools');
-
-
-
-    // Valores da tabela Pools
-    const [esporte, setEsporte] = useState('');
-    const [name, setName] = useState('');
-    const [qtdPessoa, setQtdPessoa] = useState(0);
-    const [particular, setParticular] = useState(false);
-    const [valor, setValor] = useState(0);
-    const [obs, setObs] = useState('');
-    const [cep, setCep] = useState(0);
-    const [estado, setEstado] = useState('');
-    const [cidade, setCidade] = useState('');
-    const [bairro, setBairro] = useState('');
-    const [num, setNum] = useState('');
-    const [rua, setRua] = useState('');
-    const [ref, setRef] = useState('');
-    const [date, setDate] = useState(new Date());
-
+    // Função para validar os campos
     const validateFields = () => {
         if (!name || !esporte || qtdPessoa <= 0 || particular == true && valor <= 0
             || cep <= 0 || !estado || !cidade || !bairro || !rua
             || !num || !ref || !date) {
-            // Verifique se todos os campos obrigatórios estão preenchidos
+
             toast.show({
                 title: 'Preencha todos os campos!',
                 placement: 'top',
@@ -73,11 +87,10 @@ export function EditEvent({ route }) {
             return false;
         }
 
-        // Adicione outras validações específicas de acordo com seus requisitos
-
         return true;
     };
 
+    // Puxar os dados já existentes do evento
     const handleJoinPool = async () => {
 
         const dataUser = query(poolsCollection, where("code", "==", idEvent));
@@ -86,30 +99,7 @@ export function EditEvent({ route }) {
 
     }
 
-    const toggleDate = () => {
-        setShowPicker(!showPicker);
-    };
-
-    const onChange = (event, selectedDateTime) => {
-        const currentDate = selectedDateTime || date;
-        setShowPicker(Platform.OS === 'android');
-        setDate(currentDate);
-    };
-
-    const toggleDateTimePicker = () => {
-        setShowPicker(!showPicker);
-    };
-
-    const handleDateTimeConfirm = (selectedDateTime) => {
-        setDate(selectedDateTime);
-        toggleDateTimePicker();
-    };
-
-    const formatDate = (date) => {
-        const options = { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
-        return date.toLocaleDateString('pt-BR', options);
-    };
-
+    // Setar novos dados no evento
     const setEdit = async () => {
 
         try {

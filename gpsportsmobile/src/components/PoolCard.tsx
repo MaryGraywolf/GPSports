@@ -1,6 +1,9 @@
-import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
+// Import das bibliotecas do React
+import * as React from "react";
 import { Heading, HStack, Text, VStack } from 'native-base';
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
+// Import dos Componentes
 import { Participants, ParticipantProps } from './Participants';
 
 export interface PoolCardPros {

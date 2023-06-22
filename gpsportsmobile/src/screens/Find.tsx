@@ -1,32 +1,40 @@
-import { useCallback, useState, useEffect } from 'react';
-import { VStack, Icon, useToast, FlatList, Text, Heading, ScrollView } from 'native-base';
-import { Octicons } from '@expo/vector-icons';
+// Imports do React Native e demais bibliotecas
+import { useCallback, useState } from 'react';
+import { VStack, FlatList, Heading, ScrollView } from 'native-base';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
+// Imports dos componentes
 import { Header } from "../components/Header";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import { PoolCard, PoolCardPros } from '../components/PoolCard';
+import { PoolCard} from '../components/PoolCard';
 import { Loading } from '../components/Loading';
 import { EmptyPoolList } from '../components/EmptyPoolList';
 
-import { firebaseConfig } from '../../firebase-config';
+// Imports do firebase
 import { getAuth } from 'firebase/auth';
+import { firebaseConfig } from '../../firebase-config';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 
 export function Find() {
 
-
-    const [isLoading, setIsLoading] = useState(true);
-    const [pools, setPools] = useState([]);
-    const [search, setSearch] = useState('');
-
+    // Const de navegação
     const { navigate } = useNavigation();
 
+    // Conexão com o banco
     const auth = getAuth(firebaseConfig);
     const db = getFirestore(firebaseConfig);
     const poolsCollection = collection(db, 'pools');
     const userCollection = collection(db, 'users');
+
+    // Const de status
+    const [isLoading, setIsLoading] = useState(true);
+
+    // const para pesquisa do código
+    const [search, setSearch] = useState('');
+
+    // Const para armazenar os dados do banco
+    const [pools, setPools] = useState([]);
 
     useFocusEffect(
         useCallback(() => {
@@ -115,13 +123,11 @@ export function Find() {
                 // filtrar as pools que o usuário não está participando
                 const filteredPools = allPools.filter((pool) => !participantPoolIds.includes(pool.id));
 
-
                 setPools(filteredPools);
                 setIsLoading(false);
             };
 
             fetchPools();
-
 
         }, [])
     );
@@ -186,7 +192,6 @@ export function Find() {
                     }
 
                 </VStack>
-
             </VStack>
         </ScrollView>
     );

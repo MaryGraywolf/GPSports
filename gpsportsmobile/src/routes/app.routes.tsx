@@ -1,19 +1,20 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { PlusCircle, SoccerBall, UserCircle } from 'phosphor-react-native';
+// Import das bibliotecas do React
 import { useTheme } from 'native-base';
 import { Platform } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { PlusCircle, SoccerBall, UserCircle } from 'phosphor-react-native';
 
+// Import dos Componentes
 import { New } from '../screens/New';
-import { Pools } from '../screens/Pools';
 import { Find } from '../screens/Find';
 import { User } from '../screens/User';
+import { Pools } from '../screens/Pools';
 import { SignIn } from '../screens/SignIn';
+import { Details } from '../screens/Details';
 import { Register } from '../screens/Register';
+import { EditEvent } from '../screens/EditEvent';
 import { InfoRegisterUser } from '../screens/InfoRegisterUser';
 import { EmailVerification } from '../screens/EmailVerification';
-import { Details } from '../screens/Details';
-import { EditEvent } from '../screens/EditEvent';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -103,7 +104,6 @@ export function AppRoutes() {
       <Screen
         name="user"
         component={User}
-        initialParams={{ user: '' }} // Defina o tipo e o valor inicial do par�metro email
         options={{
           tabBarIcon: ({ color }) => <UserCircle color={color} size={size} />,
           tabBarLabel: () => null

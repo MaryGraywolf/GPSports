@@ -1,35 +1,39 @@
-import { Center, Text, Icon, Heading, VStack, Pressable, useToast } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
-import { Fontisto, MaterialIcons } from '@expo/vector-icons';
-import { Button } from "../components/Button";
-import { Header } from "../components/Header";
-import { Input } from "../components/Input";
-import { useAuth } from '../hooks/useAuth';
-
+// Import das bibliotecas do React
 import React from 'react';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+import { Center, Text, Icon, Heading, VStack, Pressable, useToast } from 'native-base';
+
+// Import dos icones e dos componentes
+import { Input } from "../components/Input";
+import { Button } from "../components/Button";
+import { MaterialIcons } from '@expo/vector-icons';
+
+// Import das configurações do firebase
 import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs, setDoc, doc } from 'firebase/firestore/lite';
-import { Alert } from 'react-native';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
 
 
 function RegisteConext() {
 
+  // Variaveis de controle
   const toast = useToast();
   const { navigate } = useNavigation();
-
   const [show, setShow] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
+  // Conexões com o banco
+  const auth = getAuth(firebaseConfig);
+  const db = getFirestore(firebaseConfig);
+
+  // Variaveis de valor
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [name, setName] = React.useState('');
   const [nickName, setNickName] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
 
-  const auth = getAuth(firebaseConfig);
-  const db = getFirestore(firebaseConfig);
-
+  // Função de Registro com email e senha do Firebase
   const handleCreateAccount = () => {
 
     setIsLoading(true);

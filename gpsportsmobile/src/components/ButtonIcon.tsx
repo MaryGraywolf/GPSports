@@ -1,6 +1,7 @@
-import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { IconProps } from "phosphor-react-native";
+import * as React from "react";
 import { useTheme } from "native-base";
+import { IconProps } from "phosphor-react-native";
+import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 
 interface Props extends TouchableOpacityProps {
   icon: React.FC<IconProps>;

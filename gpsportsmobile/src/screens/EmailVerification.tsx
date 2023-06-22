@@ -1,20 +1,25 @@
-import { Center, Text, Icon, Heading, VStack, Pressable, useToast } from 'native-base';
+// Import das bibliotecas do React
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { Center, Text, Icon, Heading, VStack, useToast } from 'native-base';
+
+// Import dos icones e componentes
 import { MaterialIcons } from '@expo/vector-icons';
 
-import React from 'react';
+// Import das configurações do firebase
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth, sendEmailVerification } from 'firebase/auth';
 
 
 function SendEmail() {
 
+    // Variaveis de controle
     const toast = useToast();
-
-    const auth = getAuth(firebaseConfig); // Obtenha a inst�ncia do objeto de autentica��o
     const navigation = useNavigation();
 
-    // Verifique se o usu�rio est� autenticado e o e-mail est� verificado
+    const auth = getAuth(firebaseConfig); // Variavel de autenticação
+
+    // Função de envio de e-mail de verificação
     if (auth.currentUser && auth.currentUser.emailVerified == false) {
         sendEmailVerification(auth.currentUser)
             .then(() => {

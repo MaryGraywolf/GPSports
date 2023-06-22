@@ -1,33 +1,40 @@
+// Import da biblioteca do React e de seus tipos
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { Center, Text, Icon, VStack, Checkbox, Stack, ScrollView} from 'native-base';
 
-import { useNavigation } from '@react-navigation/native';
+// Imports dos componentes
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 
-import { firebaseConfig } from '../../firebase-config';
+// Imports do firebase
 import { getAuth } from 'firebase/auth';
+import { firebaseConfig } from '../../firebase-config';
 import { getFirestore, collection, getDocs, updateDoc, doc, where, query } from 'firebase/firestore';
-import { useEffect } from 'react';
 
 
 export function InfoRegisterUser() {
 
+    // const de navegação
     const { navigate } = useNavigation();
 
+    // const de status
     const [isLoading, setIsLoading] = React.useState(false);
 
+    // const para armazenar os dados do banco
     const [user, setUsers] = React.useState([]);
     const [cidade, setCidade] = React.useState('');
     const [estado, setEstado] = React.useState('');
     const [esportes, setEsportes] = React.useState([]);
 
+    // const das conexões com o banco
     const auth = getAuth(firebaseConfig);
     const db = getFirestore(firebaseConfig);
     const userCollectionAdd = doc(db, 'users', auth.currentUser.uid);
     const userCollectionConsult = collection(db, 'users');
 
+    // Função para atualizar os dados sempre que abrir a tela
     React.useEffect(() => {
         const getUsers = async () => {
 
@@ -38,6 +45,7 @@ export function InfoRegisterUser() {
         getUsers();
     }, []);
 
+    // Função para atualizar os dados do usuário
     const setRegister = async () => {
         try {
 

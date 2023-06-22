@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Row, Text, Pressable } from 'native-base';
 
 export function EmptyPoolList() {

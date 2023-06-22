@@ -1,3 +1,5 @@
+// Import das bibliotecas do React
+import * as React from "react";
 import { Avatar, Center, HStack, Text } from 'native-base';
 
 export interface ParticipantProps {

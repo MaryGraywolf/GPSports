@@ -1,5 +1,7 @@
+// Import das bibliotecas do React
+import * as React from "react";
+import { Avatar, Heading, HStack, VStack } from 'native-base';
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
-import { Avatar, Heading, HStack, Text, VStack } from 'native-base';
 
 export interface PoolCardPros {
   id: string;

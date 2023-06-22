@@ -1,37 +1,38 @@
+// Import das bibliotecas do React
 import { useState, useCallback } from 'react';
-import { Heading, Text, VStack, Select, TextArea, HStack, Switch, ScrollView, FormControl, useToast } from 'native-base';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { TouchableOpacity, Platform, View } from 'react-native';
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { TouchableOpacity} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Heading, Text, VStack, Select, TextArea, HStack, Switch, ScrollView, FormControl, useToast } from 'native-base';
 
-import { firebaseConfig } from '../../firebase-config';
-import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore';
-
+// Import dos icones e componentes
 import { Header } from "../components/Header";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
+
+// Import das configurações do firebase
 import { getAuth } from 'firebase/auth';
-import { query, where } from 'firebase/firestore';
+import { firebaseConfig } from '../../firebase-config';
+import { getFirestore, collection, getDocs, addDoc, query, where  } from 'firebase/firestore';
 
 
 export function New() {
 
+    // const de navegação
     const { navigate } = useNavigation();
-    const toast = useToast();
 
+    // const de status
+    const toast = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [showPicker, setShowPicker] = useState(false);
 
     // Conexões com o Banco
-
     const auth = getAuth(firebaseConfig);
     const db = getFirestore(firebaseConfig);
     const poolsCollection = collection(db, 'pools');
     const userCollection = collection(db, 'users');
 
     // Valores da tabela Users
-
     const [user, setUser] = useState([]);
 
     // Valores da tabela Pools
@@ -50,37 +51,7 @@ export function New() {
     const [ref, setRef] = useState('');
     const [date, setDate] = useState(new Date());
 
-    const validateFields = () => {
-        if (!name || !esporte || qtdPessoa <= 0 || particular == true && valor <= 0 
-            || cep <= 0 || !estado || !cidade || !bairro || !rua
-            || !num || !ref || !date) {
-            // Verifique se todos os campos obrigatórios estão preenchidos
-            toast.show({
-                title: 'Preencha todos os campos!',
-                placement: 'top',
-                bgColor: 'red.500'
-            });
-
-            return false;
-        }
-
-        // Adicione outras validações específicas de acordo com seus requisitos
-
-        return true;
-    };
-
-    function generateCode() {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let code = '';
-        for (let i = 0; i < 6; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            code += characters.charAt(randomIndex);
-        }
-        return code;
-    }
-
-    const code = generateCode();
-
+    // Função para buscar o usuário logado
     useFocusEffect(
         useCallback(() => {
 
@@ -111,6 +82,20 @@ export function New() {
         }, [])
     );
 
+    // Função para gerar um código único aleatório para o evento
+    function generateCode() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let code = '';
+        for (let i = 0; i < 6; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            code += characters.charAt(randomIndex);
+        }
+        return code;
+    }
+
+    const code = generateCode();
+
+    // Função para criar o evento
     const setRegister = async () => {
 
         try {
@@ -188,16 +173,7 @@ export function New() {
         }
     }
 
-    const toggleDate = () => {
-        setShowPicker(!showPicker);
-    };
-
-    const onChange = (event, selectedDateTime) => {
-        const currentDate = selectedDateTime || date;
-        setShowPicker(Platform.OS === 'android');
-        setDate(currentDate);
-    };
-
+    // Funções relacionadas a data
     const toggleDateTimePicker = () => {
         setShowPicker(!showPicker);
     };
@@ -210,6 +186,26 @@ export function New() {
     const formatDate = (date) => {
         const options = { day: 'numeric', month: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' };
         return date.toLocaleDateString('pt-BR', options);
+    };
+
+    // Função para validar os campos
+    const validateFields = () => {
+        if (!name || !esporte || qtdPessoa <= 0 || particular == true && valor <= 0
+            || cep <= 0 || !estado || !cidade || !bairro || !rua
+            || !num || !ref || !date) {
+            // Verifique se todos os campos obrigatórios estão preenchidos
+            toast.show({
+                title: 'Preencha todos os campos!',
+                placement: 'top',
+                bgColor: 'red.500'
+            });
+
+            return false;
+        }
+
+        // Adicione outras validações específicas de acordo com seus requisitos
+
+        return true;
     };
 
     return (
